@@ -1,0 +1,12 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Core\\": "core/",
+      "App\\": "app"
+    }
+  },
+  "require": {
+    "ext-pdo": "*",
+    "fakerphp/faker": "^1.24"
+  }
+}
