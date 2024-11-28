@@ -1,5 +1,5 @@
 .idea/
 docker/mysql/
-vendor/
-composer.lock
-composer.phar
+www/composer.lock
+www/composer.phar
+www/vendor/
