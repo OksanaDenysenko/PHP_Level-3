@@ -1,6 +1,6 @@
 <?php
 
-namespace Core;
+namespace Core\Data;
 
 use PDO;
 
@@ -19,7 +19,7 @@ class Database
         try {
             $this->connection = new PDO($dsn, DB_USER, DB_PASS);
         } catch (\Exception $e) {
-            \Core\Error::error(500, $e->getMessage());
+            \Core\Application\Error::error(500, $e->getMessage());
         }
         return $this;
     }

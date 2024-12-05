@@ -1,6 +1,6 @@
 <?php
 
-namespace Core;
+namespace Core\Application;
 
 class Controller
 {
@@ -18,7 +18,7 @@ class Controller
             require_once $filename;
 
         } else {
-            \Core\Error::error(404);
+            \Core\Application\Error::error(404);
         }
     }
 }

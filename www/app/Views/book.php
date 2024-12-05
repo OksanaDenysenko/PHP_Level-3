@@ -57,7 +57,7 @@
             <script id="pattern" type="text/template">
                 <div data-book-id="{id}" class="book_item col-xs-6 col-sm-3 col-md-2 col-lg-2">
                     <div class="book">
-                        <a href="/book/{id}"><img src="img/books/{id}.jpg" alt="{title}">
+                        <a href="/book/{id}"><img src="./assets/images/{id}.jpg" alt="{title}">
                             <div data-title="{title}" class="blockI">
                                 <div data-book-title="{title}" class="title size_text">{title}</div>
                                 <div data-book-author="{author}" class="author">{author}</div>
@@ -69,10 +69,10 @@
                     </div>
                 </div>
             </script>
-            <div id="id" book-id="22">
+            <div id="id" book-id="1">
                 <div id="bookImg" class="col-xs-12 col-sm-3 col-md-3 item" style="
     margin:;
-"><img src="./assets/images/22.jpg" alt="Responsive image" class="img-responsive">
+"><img src="./assets/images/1.jpg" alt="Responsive image" class="img-responsive">
 
                     <hr>
                 </div>

@@ -1,22 +1,40 @@
 <?php
 
-namespace Core;
+namespace Core\Data;
+
+use Core\Data;
 
 class Migration extends Database
 {
+    /**
+     * The function for selecting the migration process
+     * @param string $functionName - a name of a function in class Migration
+     * @param int $batch - migration group number
+     * @return void
+     */
+    public function migration(string $functionName, int $batch): void
+    {
+        if(!method_exists($this,$functionName)) {
+            echo "Function not found: $functionName";
+        }
+
+        $this->$functionName($batch);
+        //call_user_func('\Core\Data\Migration\\'.$functionName,$batch);
+    }
+
     /**
      * The function performs the migration and makes a record about it in the migrations table
      * @param string $filename - a name of a sql file
      * @param int $batch - migration group number
      * @return void
      */
-    private function completingMigration(string $filename, int $batch): void
+    private function postMigration(string $filename, int $batch): void
     {
         $pathFile = MIGRATION_DIR_UP . '/' . $filename;
         $this->query(file_get_contents($pathFile));
         $this->query('INSERT INTO migrations (migration, batch) VALUES (?,?)', [$filename, $batch]);
 
-        echo 'Migration ' . $filename . ' completed' . PHP_EOL;
+        echo 'Migration completed: ' . $filename . PHP_EOL;
     }
 
 
@@ -25,16 +43,16 @@ class Migration extends Database
      * @param int $batch - migration group number
      * @return void
      */
-    public function runMigrations(int $batch): void
+    public function run(int $batch): void
     {
         $migrations = scandir(MIGRATION_DIR_UP);
 
         foreach ($migrations as $file) {
             if ($file === '.' || $file === '..') continue; // Skipping hidden directories
 
-            $doneMigration = (new \Core\Database())->query('SELECT * FROM migrations WHERE migration = ?', [$file])->getOne();
+            $doneMigration = (new Data\Database())->query('SELECT * FROM migrations WHERE migration = ?', [$file])->getOne();
 
-            if (!$doneMigration) $this->completingMigration($file, $batch);
+            if (!$doneMigration) $this->postMigration($file, $batch);
         }
 
         echo 'The migration process is completed successfully' . PHP_EOL;
@@ -66,9 +84,9 @@ class Migration extends Database
      * @param int $batch - migration group number
      * @return void
      */
-    public function rollbackMigrations(int $batch): void
+    public function rollback(int $batch): void
     {
-        $rollbackMigrations = (new \Core\Database())->query('SELECT migration FROM migrations
+        $rollbackMigrations = (new Data\Database())->query('SELECT migration FROM migrations
                  WHERE batch = ? ORDER BY id DESC', [$batch])->getColumn();
 
         foreach ($rollbackMigrations as $rollbackMigration) {

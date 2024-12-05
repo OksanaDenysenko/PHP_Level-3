@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use Core\Controller;
+use Core\Application\Controller;
 
 class Book extends Controller
 {

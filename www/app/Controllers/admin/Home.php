@@ -2,9 +2,9 @@
 
 namespace App\Controllers\admin;
 
-use Core\Controller;
+use Core\Application\Controller;
 
-class Admin extends Controller
+class Home extends Controller
 {
     function index()
     {
