@@ -18,7 +18,7 @@ class Router
      */
     public static function get(string $uri, string $controller, string $action): void
     {
-        self::$routes[] = ['GET' => compact('uri', 'controller', 'action')];
+        self::$routes['GET'][] = compact('uri', 'controller', 'action');
     }
 
     /**
@@ -30,7 +30,7 @@ class Router
      */
     public static function post(string $uri, string $controller, string $action): void
     {
-        self::$routes[] = ['POST' => compact('uri', 'controller', 'action')];
+        self::$routes['POST'][] = compact('uri', 'controller', 'action');
     }
 
     /**
@@ -42,7 +42,7 @@ class Router
      */
     public static function put(string $uri, string $controller, string $action): void
     {
-        self::$routes[] = ['PUT' => compact('uri', 'controller', 'action')];
+        self::$routes['PUT'][] = compact('uri', 'controller', 'action');
     }
 
     /**
@@ -54,7 +54,7 @@ class Router
      */
     public static function delete(string $uri, string $controller, string $action): void
     {
-        self::$routes[] = ['DELETE' => compact('uri', 'controller', 'action')];
+        self::$routes['DELETE'][] = compact('uri', 'controller', 'action');
     }
 
     /**
@@ -66,7 +66,7 @@ class Router
      */
     public static function patch(string $uri, string $controller, string $action): void
     {
-        self::$routes[] = ['PATCH' => compact('uri', 'controller', 'action')];
+        self::$routes['PATCH'][] = compact('uri', 'controller', 'action');
     }
 
 
