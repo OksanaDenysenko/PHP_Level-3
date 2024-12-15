@@ -18,7 +18,7 @@ class Controller
             require_once $filename;
 
         } else {
-            \Core\Application\Error::error(404);
+            \Core\Application\Response::response(404);
         }
     }
 }

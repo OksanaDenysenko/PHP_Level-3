@@ -3,3 +3,5 @@ docker/mysql/
 www/composer.lock
 www/composer.phar
 www/vendor/
+www/tmp/error.log
+www/public/assets/images

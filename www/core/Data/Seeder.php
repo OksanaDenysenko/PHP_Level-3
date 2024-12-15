@@ -6,8 +6,7 @@ interface Seeder
 {
     /**
      * Функція для заповнення таблиці
-     * @param int $count - кількість рядківдля заповнення
      * @return void
      */
-    public function run(int $count): void;
+    public function run(): void;
 }

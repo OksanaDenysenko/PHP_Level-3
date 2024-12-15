@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\admin;
+namespace App\Controllers\Admin;
 
 use Core\Application\Controller;
 
@@ -8,6 +8,6 @@ class Home extends Controller
 {
     function index()
     {
-        $this->view('admin/admin');
+        $this->view('Admin/home');
     }
 }

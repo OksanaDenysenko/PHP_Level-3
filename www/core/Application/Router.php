@@ -16,10 +16,9 @@ class Router
      * @param string $action - function in the class $controller
      * @return void
      */
-    public static function get(string $uri, string $controller,string $action): void
+    public static function get(string $uri, string $controller, string $action): void
     {
-        $method = 'GET';
-        self::$routes[] = compact('method', 'uri', 'controller', 'action');
+        self::$routes[] = ['GET' => compact('uri', 'controller', 'action')];
     }
 
     /**
@@ -29,10 +28,9 @@ class Router
      * @param $action - function in the class $controller
      * @return void
      */
-    public static function post(string $uri, string $controller,string $action): void
+    public static function post(string $uri, string $controller, string $action): void
     {
-        $method = 'POST';
-        self::$routes[] = compact('method', 'uri', 'controller', 'action');
+        self::$routes[] = ['POST' => compact('uri', 'controller', 'action')];
     }
 
     /**
@@ -42,10 +40,9 @@ class Router
      * @param $action - function in the class $controller
      * @return void
      */
-    public static function put(string $uri, string $controller,string $action): void
+    public static function put(string $uri, string $controller, string $action): void
     {
-        $method = 'PUT';
-        self::$routes[] = compact('method', 'uri', 'controller', 'action');
+        self::$routes[] = ['PUT' => compact('uri', 'controller', 'action')];
     }
 
     /**
@@ -55,10 +52,9 @@ class Router
      * @param $action - function in the class $controller
      * @return void
      */
-    public static function delete(string $uri, string $controller,string $action): void
+    public static function delete(string $uri, string $controller, string $action): void
     {
-        $method = 'DELETE';
-        self::$routes[] = compact('method', 'uri', 'controller', 'action');
+        self::$routes[] = ['DELETE' => compact('uri', 'controller', 'action')];
     }
 
     /**
@@ -68,10 +64,9 @@ class Router
      * @param $action - function in the class $controller
      * @return void
      */
-    public static function patch(string $uri, string $controller,string $action): void
+    public static function patch(string $uri, string $controller, string $action): void
     {
-        $method = 'PATCH';
-        self::$routes[] = compact('method', 'uri', 'controller', 'action');
+        self::$routes[] = ['PATCH' => compact('uri', 'controller', 'action')];
     }
 
 
@@ -83,11 +78,12 @@ class Router
     {
         $uri = htmlspecialchars(strip_tags(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
         $method = $_SERVER['REQUEST_METHOD'];
-        //show($uri . "   " . $method);
 
-        foreach (self::$routes as $route) {
+        $routesOfThisMethod = self::$routes[$method];
 
-            if ($route['method'] === $method && $route['uri'] === $uri) {
+        foreach ($routesOfThisMethod as $route) {
+
+            if ($route['uri'] == $uri) {
                 $nameController = $route['controller'];
                 $action = $route['action'];
 
@@ -97,7 +93,7 @@ class Router
             }
         }
 
-        Application\Error::error(404);
+        Application\Response::response(404);
     }
 
 
@@ -109,19 +105,15 @@ class Router
      */
     private static function actionController(string $nameController, string $action): void
     {
-        //  $namespaceController = (str_contains($uri, 'admin') ? 'App\Controllers\admin' : 'App\Controllers') . '\\' . $nameController;
         $namespaceController = 'App\Controllers\\' . $nameController;
-        //show('namespace'.$namespaceController);
         $objectController = new $namespaceController;
-        // show($objectController);
 
         if (method_exists($objectController, $action)) {
             $objectController->$action();
-            // call_user_func_array()
 
             return;
         }
 
-        Application\Error::error(404);
+        Application\Response::response(404);
     }
 }

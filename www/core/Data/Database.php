@@ -7,21 +7,45 @@ use PDO;
 
 class Database
 {
-    protected PDO $connection; // database connection
+    private static ?self $instance = null;
+    protected static PDO $connection; // database connection
     protected \PDOStatement $stm;
+
+//    public function __construct()
+//    {
+//        $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8';
+//        try {
+//            $this->connection = new PDO($dsn, DB_USER, DB_PASS);
+//        } catch (\PDOException $e) {
+//            \Core\Application\Response::error(500, $e->getMessage());
+//        }
+//        //return $this;
+//    }
 
     /**
      * The function creates a connection to a database
      */
-    public function __construct()
+    private function connection(): void
     {
         $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8';
         try {
-            $this->connection = new PDO($dsn, DB_USER, DB_PASS);
-        } catch (\Exception $e) {
-            \Core\Application\Error::error(500, $e->getMessage());
+            self::$connection = new PDO($dsn, DB_USER, DB_PASS);
+        } catch (\PDOException $e) {
+            \Core\Application\Response::response(500, $e->getMessage());
         }
-        return $this;
+    }
+
+    /**
+     * The function checks that a class has only one instance
+     * @return Database|null - class object
+     */
+    public static function getInstance(): ?Database
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+            self::$instance->connection();
+        }
+        return self::$instance;
     }
 
     /**
@@ -32,12 +56,8 @@ class Database
      */
     public function query(string $query, array $data = []): static
     {
-        $this->stm = $this->connection->prepare($query);
+        $this->stm = self::$connection->prepare($query);
         $this->stm->execute($data);
-
-//        if ($this->stm->execute($data)) {
-//            return $this->stm->fetchAll();
-//        }
 
         return $this;
     }

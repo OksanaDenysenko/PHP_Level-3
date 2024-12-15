@@ -2,7 +2,6 @@
 
 namespace Core\Data;
 
-use Core\Data;
 
 class Migration extends Database
 {
@@ -19,7 +18,6 @@ class Migration extends Database
         }
 
         $this->$functionName($batch);
-        //call_user_func('\Core\Data\Migration\\'.$functionName,$batch);
     }
 
     /**
@@ -50,7 +48,9 @@ class Migration extends Database
         foreach ($migrations as $file) {
             if ($file === '.' || $file === '..') continue; // Skipping hidden directories
 
-            $doneMigration = (new Data\Database())->query('SELECT * FROM migrations WHERE migration = ?', [$file])->getOne();
+            $db = Database::getInstance();
+
+            $doneMigration = $db->query('SELECT * FROM migrations WHERE migration = ?', [$file])->getOne();
 
             if (!$doneMigration) $this->postMigration($file, $batch);
         }
@@ -75,7 +75,7 @@ class Migration extends Database
             echo 'Migration rollback is done:' . $filename . PHP_EOL;
 
         } catch (\Exception $e) {
-            echo 'Migration rollback failed: ' . $filename . 'Error: ' . $e->getMessage() . PHP_EOL;
+            echo 'Migration rollback failed: ' . $filename . 'Response: ' . $e->getMessage() . PHP_EOL;
         }
     }
 
@@ -86,7 +86,8 @@ class Migration extends Database
      */
     public function rollback(int $batch): void
     {
-        $rollbackMigrations = (new Data\Database())->query('SELECT migration FROM migrations
+        $db = Database::getInstance();
+        $rollbackMigrations = $db->query('SELECT migration FROM migrations
                  WHERE batch = ? ORDER BY id DESC', [$batch])->getColumn();
 
         foreach ($rollbackMigrations as $rollbackMigration) {
@@ -95,5 +96,4 @@ class Migration extends Database
 
         echo 'Rollback of migration group №' . $batch . ' completed' . PHP_EOL;
     }
-
 }
