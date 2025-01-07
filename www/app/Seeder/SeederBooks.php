@@ -1,27 +1,13 @@
 <?php
 
-namespace App\Models\Seeder;
+namespace App\Seeder;
 
-use Core\Application\Response;
+use App\Models\Repository\BookRepository;
 use Core\Data\Database;
 use Core\Data\Seeder;
 
-class SeederBooks implements Seeder
+class SeederBooks extends Seeder
 {
-
-//    public function run(int $count): void
-//    {
-//        for ($i = 1; $i < $count+1; $i++) {
-//            $this->query("INSERT INTO books (title, content, year, number_of_pages, imade) VALUES (?, ?, ?, ?)", [
-//                $this->getTitle(),
-//                $this->getContent(),
-//                $this->getYear(),
-//                $this->getNumberOfPages(),
-//                $this->getImage($i)
-//            ]);
-//        }
-//    }
-
     /**
      * The function contains an array of data and runs seed() to insert the data
      * @return void
@@ -55,23 +41,6 @@ class SeederBooks implements Seeder
             ['title' => 'Practical Vim', 'content' => 'Програмування', 'year' => 2022, 'number_of_pages' => 150, 'image' => IMAGES_DIR . '/24.jpg'],
         ];
 
-        $this->seed($data);
-    }
-
-    /**
-     * The function processes the data array and executes an SQL query to insert data into the table
-     * @param array $data - the data array
-     * @return void
-     */
-    protected function seed(array $data): void
-    {
-        $db = Database::getInstance();
-
-        foreach ($data as $bookData) {
-            $db->query("INSERT INTO books (title, content, year, number_of_pages, image)
-                       VALUES (:title, :content, :year, :number_of_pages, :image)", $bookData);
-        }
-
-        Response::response(200);
+        $this->seed(new BookRepository(),$data);
     }
 }

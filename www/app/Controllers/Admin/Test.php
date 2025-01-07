@@ -4,11 +4,11 @@ namespace App\Controllers\Admin;
 
 use Core\Application\Controller;
 
-class Home extends Controller
+class Test extends Controller
 {
-    function index(): void
+    function index()
     {
-        $this->view('Admin/home');
+        $this->view('Admin/test');
         require DEFAULT_TEMPLATE;
     }
 }

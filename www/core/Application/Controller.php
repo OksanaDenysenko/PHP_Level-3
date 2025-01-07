@@ -4,21 +4,24 @@ namespace Core\Application;
 
 class Controller
 {
+    public string $content = '';
+
     /**
-     * The function loads the view
-     * @param $nameView - the name of the view to load
+     *
+     * @param string $view - the name of the view to load
+     * @param array $data
      * @return void
      */
-    public function view(string $nameView): void
+    public function view(string $view, array $data = []): void
     {
-        $filename = "../app/Views/" . $nameView . ".php";
-        //show($filename);
+
+        $filename = VIEWS_DIR . "/$view.php";
 
         if (file_exists($filename)) {
+            ob_start();
             require_once $filename;
-
-        } else {
-            \Core\Application\Response::response(404);
+            $this->content= ob_get_clean();
         }
+        //else вивід 404
     }
 }

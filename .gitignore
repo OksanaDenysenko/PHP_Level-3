@@ -5,3 +5,5 @@ www/composer.phar
 www/vendor/
 www/public/assets/images
 www/tmp/error.log
+www/app/Controllers/Admin/Test.php
+www/app/Views/admin/test.php

@@ -13,7 +13,7 @@ class Migration extends Database
      */
     public function migration(string $functionName, int $batch): void
     {
-        if(!method_exists($this,$functionName)) {
+        if (!method_exists($this, $functionName)) {
             echo "Function not found: $functionName";
         }
 
@@ -68,15 +68,8 @@ class Migration extends Database
     {
         $pathFile = MIGRATION_DIR_DOWN . '/' . $filename;
 
-        try {
-            $this->query(file_get_contents($pathFile));
-            $this->query('DELETE FROM migrations WHERE migration = ?', [$filename]);
-
-            echo 'Migration rollback is done:' . $filename . PHP_EOL;
-
-        } catch (\Exception $e) {
-            echo 'Migration rollback failed: ' . $filename . 'Response: ' . $e->getMessage() . PHP_EOL;
-        }
+        $this->query(file_get_contents($pathFile));
+        $this->query('DELETE FROM migrations WHERE migration = ?', [$filename]);
     }
 
     /**
@@ -91,7 +84,15 @@ class Migration extends Database
                  WHERE batch = ? ORDER BY id DESC', [$batch])->getColumn();
 
         foreach ($rollbackMigrations as $rollbackMigration) {
-            $this->deleteMigration($rollbackMigration);
+
+            try {
+                $this->deleteMigration($rollbackMigration);
+
+                echo 'Migration rollback is done:' . $rollbackMigration . PHP_EOL;
+
+            } catch (\Exception $e) {
+                echo 'Migration rollback failed: ' . $rollbackMigration . 'Response: ' . $e->getMessage() . PHP_EOL;
+            }
         }
 
         echo 'Rollback of migration group №' . $batch . ' completed' . PHP_EOL;

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models\Seeder;
+namespace App\Seeder;
 
-use Core\Application\Response;
+use App\Models\Repository\AuthorRepository;
 use Core\Data\Database;
 use Core\Data\Seeder;
 
-class SeederAuthors extends Database implements Seeder
+class SeederAuthors extends Seeder
 {
     /**
      * The function contains an array of data and runs seed() to insert the data
@@ -46,22 +46,6 @@ class SeederAuthors extends Database implements Seeder
             ['full_name' => 'Дрю Нейл'],
         ];
 
-        $this->seed($data);
-    }
-
-    /**
-     * The function processes the data array and executes an SQL query to insert data into the table
-     * @param array $data - the data array
-     * @return void
-     */
-    protected function seed(array $data): void
-    {
-        $db = Database::getInstance();
-
-        foreach ($data as $authorData) {
-            $db->query("INSERT INTO authors (full_name) VALUES (:full_name)", $authorData);
-        }
-
-        Response::response(200);
+        $this->seed(new AuthorRepository(), $data);
     }
 }

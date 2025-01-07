@@ -11,21 +11,11 @@ class Database
     protected static PDO $connection; // database connection
     protected \PDOStatement $stm;
 
-//    public function __construct()
-//    {
-//        $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8';
-//        try {
-//            $this->connection = new PDO($dsn, DB_USER, DB_PASS);
-//        } catch (\PDOException $e) {
-//            \Core\Application\Response::error(500, $e->getMessage());
-//        }
-//        //return $this;
-//    }
 
     /**
      * The function creates a connection to a database
      */
-    private function connection(): void
+    private function connect(): void
     {
         $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8';
         try {
@@ -43,7 +33,7 @@ class Database
     {
         if (self::$instance === null) {
             self::$instance = new self();
-            self::$instance->connection();
+            self::$instance->connect();
         }
         return self::$instance;
     }

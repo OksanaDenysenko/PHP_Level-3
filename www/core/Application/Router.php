@@ -77,39 +77,47 @@ class Router
     public static function getController(): void
     {
         $uri = htmlspecialchars(strip_tags(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
-        $method = $_SERVER['REQUEST_METHOD'];
-
+        $method = $_SERVER['REQUEST_METHOD'];;
         $routesOfThisMethod = self::$routes[$method];
 
         foreach ($routesOfThisMethod as $route) {
 
-            if ($route['uri'] == $uri) {
+            if (preg_match("#^{$route['uri']}$#", $uri, $matches)) {
                 $nameController = $route['controller'];
                 $action = $route['action'];
 
-                self::actionController($nameController, $action);
+                if (!empty($matches["id"])) {
+                    self::callControllerAction($nameController, $action, $matches["id"]);
+
+                    return;
+                }
+
+                self::callControllerAction($nameController, $action);
 
                 return;
             }
         }
 
         Application\Response::response(404);
+
     }
 
 
     /**
      * The function creates an instance of the controller class and calls the controller method
-     * @param $nameController - controller class name
-     * @param $action - function in the class $controller
+     * @param string $nameController - controller class name
+     * @param string $action - function in the class $controller
+     * @param int|null $id
      * @return void
      */
-    private static function actionController(string $nameController, string $action): void
+    private static function callControllerAction(string $nameController, string $action, int $id = null): void
     {
         $namespaceController = 'App\Controllers\\' . $nameController;
         $objectController = new $namespaceController;
 
         if (method_exists($objectController, $action)) {
-            $objectController->$action();
+
+            $objectController->$action($id);
 
             return;
         }
