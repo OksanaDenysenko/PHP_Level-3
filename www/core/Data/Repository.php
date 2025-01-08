@@ -5,66 +5,59 @@ namespace Core\Data;
 
 abstract class Repository extends Database
 {
-    protected Database $db; // зєднання з БД
+    protected Database $db; // connection to the database
 
-    protected string $nameTable;
+    protected const TABLE_NAME = '';
 
-//    public function __construct($nameTable) {
-//        $this->db = Database::getInstance();
-//        $this->nameTable=$nameTable;
-//    }
-
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = Database::getInstance();
     }
 
-    abstract public function initializeNameTable();
-
-
     /**
-     * Пошук однієї книги за $id
-     * @param int $id
+     * The function finds one record by ID in a given database table.
+     * @param int $id - id the record
      * @return mixed
      */
     public function find(int $id): mixed
     {
-        return $this->db->query('SELECT * FROM'. $this->nameTable.' WHERE id=?', [$id])->getOne();
+        return $this->db->query('SELECT * FROM ' . static::TABLE_NAME . ' WHERE id=?', [$id])->getOne();
     }
 
     /**
-     * Вивід всього списку книг
-     * @param string $nameColumns
+     * The function finds all record in a given database table.
+     * @param string $nameColumns - the list of fields to be output. All fields will be selected by default.
      * @return bool|array
      */
-    public function findAll(string $nameColumns='*'): bool|array
+    public function findAll(string $nameColumns = '*'): bool|array
     {
-        return $this->db->query("SELECT $nameColumns FROM $this->nameTable")->getAll();
+        return $this->db->query("SELECT $nameColumns FROM " . static::TABLE_NAME)->getAll();
     }
 
     /**
-     * Додавання нової книги
-     * @param array $data
+     * The function inserts a new record into a given database table.
+     * @param array $data - data to insert
      * @return void
      */
     public function insert(array $data): void
     {
         $keys = array_keys($data);
 
-        $this->db->query('INSERT INTO'. $this->nameTable.'(' . implode(',', $keys) . ') 
+        $this->db->query('INSERT INTO ' . static::TABLE_NAME . ' (' . implode(',', $keys) . ') 
                          VALUES (:' . implode(':,', $keys) . ')', $data);
     }
 
     /**
-     * Оновлення запису в таблиці
-     * @param int $id
-     * @param array $data
+     * The function updates an existing record in a given database table.
+     * @param int $id - id the record
+     * @param array $data - data to update
      * @return void
      */
     public function update(int $id, array $data): void
     {
         $keys = array_keys($data);
 
-        $query = "UPDATE $this->nameTable SET ";
+        $query = 'UPDATE '.static::TABLE_NAME.' SET ';
 
         foreach ($keys as $key) {
             $query = $query . "$key=:$key, ";
@@ -76,16 +69,16 @@ abstract class Repository extends Database
 
         $data['id'] = $id;
 
-        $this->db->query($query,$data);
+        $this->db->query($query, $data);
     }
 
     /**
-     * Видалення книги
-     * @param int $id
+     * The function deletes a record in a given database table.
+     * @param int $id - id the record
      * @return void
      */
     public function delete(int $id): void
     {
-        $this->db->query("DELETE FROM $this->nameTable WHERE id = ?", [$id]);
+        $this->db->query('DELETE FROM '.static::TABLE_NAME.' WHERE id = ?', [$id]);
     }
 }

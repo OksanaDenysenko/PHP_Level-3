@@ -4,7 +4,7 @@ namespace App\Controllers\Admin;
 
 use Core\Application\Controller;
 
-class Home extends Controller
+class HomeController extends Controller
 {
     function index(): void
     {

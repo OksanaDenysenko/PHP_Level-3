@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Seeder;
+namespace Database\Seeder;
 
-use App\Models\Repository\BookRepository;
-use Core\Data\Database;
+use App\Repository\BookRepository;
 use Core\Data\Seeder;
 
 class SeederBooks extends Seeder
