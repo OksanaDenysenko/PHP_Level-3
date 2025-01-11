@@ -11,7 +11,6 @@ class Database
     protected static PDO $connection; // database connection
     protected \PDOStatement $stm;
 
-
     /**
      * The function creates a connection to a database
      */
