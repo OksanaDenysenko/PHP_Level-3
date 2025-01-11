@@ -7,6 +7,6 @@ RUN docker-php-ext-install zip
 
 RUN docker-php-ext-install pdo pdo_mysql
 
-WORKDIR /var/www
+WORKDIR /var/www/html
 
 ENTRYPOINT ["php-fpm"]
