@@ -1,11 +1,5 @@
 <?php
 
-// database config
-const DB_NAME='library';
-const DB_HOST='mysql1';
-const DB_USER = 'root';
-const DB_PASS='root';
-
 // log file
 const ERROR_LOGS = __DIR__ . '/../../tmp/error.log';
 

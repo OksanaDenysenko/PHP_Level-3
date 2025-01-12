@@ -28,7 +28,7 @@ class BookRepository extends Repository
      * @param int $id - id the book
      * @return mixed
      */
-    public function getOneBookWithAuthor(int $id): mixed
+    public function getBookWithAuthors(int $id): mixed
     {
         return $this->db->query("SELECT b.id, b.title, b.content, b.year, b.number_of_pages, 
                GROUP_CONCAT(a.full_name SEPARATOR ', ') AS authors 
