@@ -1,9 +1,7 @@
 <?php
 
-use Database\Seeder\{SeederBooks};
-use Database\Seeder\SeederAuthors;
-use Database\Seeder\SeederBookAuthor;
+use Database\Seeder\{BooksSeeder,AuthorsSeeder,BookAuthorSeeder};
 
-(new SeederBooks())->run();
-(new SeederAuthors())->run();
-(new SeederBookAuthor())->run();
+(new BooksSeeder())->run();
+(new AuthorsSeeder())->run();
+(new BookAuthorSeeder())->run();

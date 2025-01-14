@@ -5,7 +5,7 @@ namespace Database\Seeder;
 use App\Repository\BookRepository;
 use Core\Data\Seeder;
 
-class SeederBooks extends Seeder
+class BooksSeeder extends Seeder
 {
     /**
      * The function contains an array of data and runs seed() to insert the data
