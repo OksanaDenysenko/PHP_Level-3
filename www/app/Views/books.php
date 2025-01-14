@@ -2,11 +2,7 @@
     <div class="container">
         <div id="content" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <?php
-            foreach ($data as $value) {
-               // show($value);
-                $id = $value['id'];
-                $title = $value['title'];
-                $authors = $value['authors'];
+            foreach ($data as $book) {
                 require 'books_one.php';
             }
             ?>
