@@ -3,15 +3,13 @@
 namespace Core\Data;
 
 
-abstract class Repository extends Database
+abstract class Repository
 {
-    protected Database $db; // connection to the database
-
     protected const TABLE_NAME = '';
 
     public function __construct()
     {
-        $this->db = Database::getInstance();
+       Database::getConnection();
     }
 
     /**
@@ -21,7 +19,7 @@ abstract class Repository extends Database
      */
     public function find(int $id): mixed
     {
-        return $this->db->query('SELECT * FROM ' . static::TABLE_NAME . ' WHERE id=?', [$id])->getOne();
+        return Database::$instance->query('SELECT * FROM ' . static::TABLE_NAME . ' WHERE id=?', [$id])->getOne();
     }
 
     /**
@@ -31,7 +29,7 @@ abstract class Repository extends Database
      */
     public function findAll(string $nameColumns = '*'): bool|array
     {
-        return $this->db->query("SELECT $nameColumns FROM " . static::TABLE_NAME)->getAll();
+        return Database::$instance->query("SELECT $nameColumns FROM " . static::TABLE_NAME)->getAll();
     }
 
     /**
@@ -43,7 +41,7 @@ abstract class Repository extends Database
     {
         $keys = array_keys($data);
 
-        $this->db->query('INSERT INTO ' . static::TABLE_NAME . ' (' . implode(',', $keys) . ') 
+        Database::$instance->query('INSERT INTO ' . static::TABLE_NAME . ' (' . implode(',', $keys) . ') 
                          VALUES (:' . implode(':,', $keys) . ')', $data);
     }
 
@@ -62,14 +60,12 @@ abstract class Repository extends Database
         foreach ($keys as $key) {
             $query = $query . "$key=:$key, ";
         }
-        // show ($query);
 
         $query = rtrim($query, ", ") . " WHERE id=:id";
-        //show($query);
 
         $data['id'] = $id;
 
-        $this->db->query($query, $data);
+        Database::$instance->query($query, $data);
     }
 
     /**
@@ -79,6 +75,6 @@ abstract class Repository extends Database
      */
     public function delete(int $id): void
     {
-        $this->db->query('DELETE FROM '.static::TABLE_NAME.' WHERE id = ?', [$id]);
+        Database::$instance->query('DELETE FROM '.static::TABLE_NAME.' WHERE id = ?', [$id]);
     }
 }

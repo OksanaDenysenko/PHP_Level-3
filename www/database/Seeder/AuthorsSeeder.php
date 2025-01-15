@@ -2,7 +2,6 @@
 
 namespace Database\Seeder;
 
-use App\Repository\AuthorRepository;
 use Core\Data\Seeder;
 
 class AuthorsSeeder extends Seeder
@@ -45,6 +44,6 @@ class AuthorsSeeder extends Seeder
             ['full_name' => 'Дрю Нейл'],
         ];
 
-        $this->seed(new AuthorRepository(), $data);
+        $this->seed($data);
     }
 }

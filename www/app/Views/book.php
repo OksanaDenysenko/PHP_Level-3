@@ -52,7 +52,7 @@
                     <p class="description"><?= $data['content'] ?></p>
                 </div>
             </div>
-            <script src="/book-page_files/book.js" defer=""></script>
+            <script src="/assets/js/book.js" defer=""></script>
         </div>
     </div>
 </section>

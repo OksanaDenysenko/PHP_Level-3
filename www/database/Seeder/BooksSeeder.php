@@ -2,7 +2,6 @@
 
 namespace Database\Seeder;
 
-use App\Repository\BookRepository;
 use Core\Data\Seeder;
 
 class BooksSeeder extends Seeder
@@ -40,6 +39,6 @@ class BooksSeeder extends Seeder
             ['title' => 'Practical Vim', 'content' => 'Програмування', 'year' => 2022, 'number_of_pages' => 150, 'image' => IMAGES_DIR . '/24.jpg'],
         ];
 
-        $this->seed(new BookRepository(),$data);
+        $this->seed($data);
     }
 }

@@ -15,7 +15,7 @@ class BookRepository extends Repository
      */
     public function getBooksWithAuthors(): bool|array
     {
-        return $this->db->query("SELECT b.id, b.title, 
+        return Database::$instance->query("SELECT b.id, b.title, 
               GROUP_CONCAT(a.full_name SEPARATOR ', ') AS authors
               FROM books b
               INNER JOIN book_author ba ON b.id = ba.book_id
@@ -30,7 +30,7 @@ class BookRepository extends Repository
      */
     public function getBookWithAuthors(int $id): mixed
     {
-        return $this->db->query("SELECT b.id, b.title, b.content, b.year, b.number_of_pages, 
+        return Database::$instance->query("SELECT b.id, b.title, b.content, b.year, b.number_of_pages, 
                GROUP_CONCAT(a.full_name SEPARATOR ', ') AS authors 
                FROM books b 
                INNER JOIN book_author ba ON b.id = ba.book_id

@@ -7,9 +7,9 @@ use PDO;
 
 class Database
 {
-    private static ?self $instance = null;
-    protected static PDO $connection; // database connection
-    protected \PDOStatement $stm;
+    public static self $instance; // instance of the class Database
+    protected static ?PDO $connection=null; // database connection
+    protected \PDOStatement $stm; //prepared SQL query
 
 
     /**
@@ -21,21 +21,25 @@ class Database
         try {
             self::$connection = new PDO($dsn, DB_USER, DB_PASS);
         } catch (\PDOException $e) {
-            \Core\Application\Response::response(500, $e->getMessage());
+            \Core\Application\Response::response(500);
+
+            error_log('[' . date('Y-m-d H:i:s') . '] 
+                       Response: ' . $e->getMessage() . PHP_EOL, 3, ERROR_LOGS);
         }
     }
 
     /**
-     * The function checks that a class has only one instance
-     * @return Database|null - class object
+     * The function creates a single connection to the database and an instance of the Database class
+     * @return PDO|null - database connection
      */
-    public static function getInstance(): ?Database
+    public static function getConnection(): ?PDO
     {
-        if (self::$instance === null) {
+        if (self::$connection === null) {
             self::$instance = new self();
             self::$instance->connect();
         }
-        return self::$instance;
+
+        return self::$connection;
     }
 
     /**
@@ -52,17 +56,29 @@ class Database
         return $this;
     }
 
+    /**
+     * The function retrieves all records from a prepared SQL query
+     * @return bool|array
+     */
     public function getAll(): bool|array
     {
         return $this->stm->fetchAll();
     }
 
+    /**
+     * The function retrieves all records from the first column from a prepared SQL query
+     * @return bool|array
+     */
     public function getColumn(): bool|array
     {
         return $this->stm->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    public function getOne()
+    /**
+     * The function retrieves one records from the first column from a prepared SQL query
+     * @return mixed
+     */
+    public function getOne(): mixed
     {
         return $this->stm->fetch();
     }

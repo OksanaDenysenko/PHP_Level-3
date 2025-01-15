@@ -2,7 +2,6 @@
 
 namespace Database\Seeder;
 
-use App\Repository\BookAuthorRepository;
 use Core\Data\Seeder;
 
 class BookAuthorSeeder extends Seeder
@@ -45,6 +44,6 @@ class BookAuthorSeeder extends Seeder
             ['book_id' => 24, 'author_id' => 29],
         ];
 
-        $this->seed(new BookAuthorRepository(),$data);
+        $this->seed($data);
     }
 }

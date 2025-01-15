@@ -3,8 +3,13 @@
 namespace Core\Data;
 
 
-class Migration extends Database
+class Migration
 {
+    public function __construct()
+    {
+        Database::getConnection();
+    }
+
     /**
      * The function for selecting the migration process
      * @param string $functionName - a name of a function in class Migration
@@ -29,8 +34,8 @@ class Migration extends Database
     private function postMigration(string $filename, int $batch): void
     {
         $pathFile = MIGRATION_DIR_UP . '/' . $filename;
-        $this->query(file_get_contents($pathFile));
-        $this->query('INSERT INTO migrations (migration, batch) VALUES (?,?)', [$filename, $batch]);
+        Database::$instance->query(file_get_contents($pathFile));
+        Database::$instance->query('INSERT INTO migrations (migration, batch) VALUES (?,?)', [$filename, $batch]);
 
         echo 'Migration completed: ' . $filename . PHP_EOL;
     }
@@ -48,9 +53,7 @@ class Migration extends Database
         foreach ($migrations as $file) {
             if ($file === '.' || $file === '..') continue; // Skipping hidden directories
 
-            $db = Database::getInstance();
-
-            $doneMigration = $db->query('SELECT * FROM migrations WHERE migration = ?', [$file])->getOne();
+            $doneMigration = Database::$instance->query('SELECT * FROM migrations WHERE migration = ?', [$file])->getOne();
 
             if (!$doneMigration) $this->postMigration($file, $batch);
         }
@@ -60,33 +63,23 @@ class Migration extends Database
 
 
     /**
-     * The function executes an SQL query to roll back the migration and delete it from the table migrations
-     * @param string $filename - a name of a sql file
-     * @return void
-     */
-    private function deleteMigration(string $filename): void
-    {
-        $pathFile = MIGRATION_DIR_DOWN . '/' . $filename;
-
-        $this->query(file_get_contents($pathFile));
-        $this->query('DELETE FROM migrations WHERE migration = ?', [$filename]);
-    }
-
-    /**
-     * The function starts the migration rollback process of the given group
+     * The function rolls back the migrations of the given group
+     * and deletes these entries from the migration table
      * @param int $batch - migration group number
      * @return void
      */
     public function rollback(int $batch): void
     {
-        $db = Database::getInstance();
-        $rollbackMigrations = $db->query('SELECT migration FROM migrations
+        $rollbackMigrations = Database::$instance->query('SELECT migration FROM migrations
                  WHERE batch = ? ORDER BY id DESC', [$batch])->getColumn();
 
         foreach ($rollbackMigrations as $rollbackMigration) {
 
             try {
-                $this->deleteMigration($rollbackMigration);
+                $pathFile = MIGRATION_DIR_DOWN . '/' . $rollbackMigration;
+
+                Database::$instance->query(file_get_contents($pathFile));
+                Database::$instance->query('DELETE FROM migrations WHERE migration = ?', [$rollbackMigration]);
 
                 echo 'Migration rollback is done:' . $rollbackMigration . PHP_EOL;
 
