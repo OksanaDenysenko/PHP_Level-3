@@ -3,12 +3,10 @@
 namespace Core\Data;
 
 
-class Migration
+use PDO;
+
+class MigrationService
 {
-    public function __construct()
-    {
-        Database::getConnection();
-    }
 
     /**
      * The function for selecting the migration process
@@ -34,8 +32,8 @@ class Migration
     private function postMigration(string $filename, int $batch): void
     {
         $pathFile = MIGRATION_DIR_UP . '/' . $filename;
-        Database::$instance->query(file_get_contents($pathFile));
-        Database::$instance->query('INSERT INTO migrations (migration, batch) VALUES (?,?)', [$filename, $batch]);
+        Database::getConnection()->query(file_get_contents($pathFile));
+        Database::getConnection()->prepare('INSERT INTO migrations (migration, batch) VALUES (?,?)')->execute([$filename, $batch]);
 
         echo 'Migration completed: ' . $filename . PHP_EOL;
     }
@@ -53,7 +51,9 @@ class Migration
         foreach ($migrations as $file) {
             if ($file === '.' || $file === '..') continue; // Skipping hidden directories
 
-            $doneMigration = Database::$instance->query('SELECT * FROM migrations WHERE migration = ?', [$file])->getOne();
+            $doneMigration = Database::getConnection()->prepare('SELECT * FROM migrations WHERE migration = ?');
+            $doneMigration->execute([$file]);
+            $doneMigration->fetch();
 
             if (!$doneMigration) $this->postMigration($file, $batch);
         }
@@ -70,16 +70,18 @@ class Migration
      */
     public function rollback(int $batch): void
     {
-        $rollbackMigrations = Database::$instance->query('SELECT migration FROM migrations
-                 WHERE batch = ? ORDER BY id DESC', [$batch])->getColumn();
+        $rollbackMigrations = Database::getConnection()->prepare('SELECT migration FROM migrations
+                 WHERE batch = ? ORDER BY id DESC', [$batch]);
+        $rollbackMigrations->execute([$batch]);
+        $rollbackMigrations->fetchAll(PDO::FETCH_COLUMN);
 
         foreach ($rollbackMigrations as $rollbackMigration) {
 
             try {
                 $pathFile = MIGRATION_DIR_DOWN . '/' . $rollbackMigration;
 
-                Database::$instance->query(file_get_contents($pathFile));
-                Database::$instance->query('DELETE FROM migrations WHERE migration = ?', [$rollbackMigration]);
+                Database::getConnection()->query(file_get_contents($pathFile));
+                Database::getConnection()->prepare('DELETE FROM migrations WHERE migration = ?')->execute([$rollbackMigration]);
 
                 echo 'Migration rollback is done:' . $rollbackMigration . PHP_EOL;
 

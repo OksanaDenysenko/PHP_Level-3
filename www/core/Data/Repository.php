@@ -7,11 +7,6 @@ abstract class Repository
 {
     protected const TABLE_NAME = '';
 
-    public function __construct()
-    {
-       Database::getConnection();
-    }
-
     /**
      * The function finds one record by ID in a given database table.
      * @param int $id - id the record
@@ -19,7 +14,10 @@ abstract class Repository
      */
     public function find(int $id): mixed
     {
-        return Database::$instance->query('SELECT * FROM ' . static::TABLE_NAME . ' WHERE id=?', [$id])->getOne();
+        $stm = Database::getConnection()->prepare("SELECT * FROM " . static::TABLE_NAME . " WHERE id = :id");
+        $stm->execute(['id' => $id]);
+
+        return $stm->fetch();
     }
 
     /**
@@ -29,7 +27,7 @@ abstract class Repository
      */
     public function findAll(string $nameColumns = '*'): bool|array
     {
-        return Database::$instance->query("SELECT $nameColumns FROM " . static::TABLE_NAME)->getAll();
+        return Database::getConnection()->query("SELECT $nameColumns FROM " . static::TABLE_NAME)->fetchAll();
     }
 
     /**
@@ -41,8 +39,8 @@ abstract class Repository
     {
         $keys = array_keys($data);
 
-        Database::$instance->query('INSERT INTO ' . static::TABLE_NAME . ' (' . implode(',', $keys) . ') 
-                         VALUES (:' . implode(':,', $keys) . ')', $data);
+        Database::getConnection()->prepare("INSERT INTO " . static::TABLE_NAME . " (" . implode(',', $keys) . ") 
+                         VALUES (:" . implode(",:", $keys) . ")")->execute($data);
     }
 
     /**
@@ -55,7 +53,7 @@ abstract class Repository
     {
         $keys = array_keys($data);
 
-        $query = 'UPDATE '.static::TABLE_NAME.' SET ';
+        $query = 'UPDATE ' . static::TABLE_NAME . ' SET ';
 
         foreach ($keys as $key) {
             $query = $query . "$key=:$key, ";
@@ -65,7 +63,7 @@ abstract class Repository
 
         $data['id'] = $id;
 
-        Database::$instance->query($query, $data);
+        Database::getConnection()->prepare($query, $data)->execute($data);
     }
 
     /**
@@ -75,6 +73,6 @@ abstract class Repository
      */
     public function delete(int $id): void
     {
-        Database::$instance->query('DELETE FROM '.static::TABLE_NAME.' WHERE id = ?', [$id]);
+        Database::getConnection()->prepare('DELETE FROM ' . static::TABLE_NAME . ' WHERE id = :id')->execute(['id'=>$id]);
     }
 }

@@ -7,7 +7,7 @@ use Core\Application\Controller;
 
 class BookController extends Controller
 {
-    function index($id): void
+    function index(int $id): void
     {
        $this->view('book', (new BookRepository())->getBookWithAuthors($id));
 

@@ -3,19 +3,17 @@
 namespace Core\Data;
 
 use PDO;
+use PDOStatement;
 
 
 class Database
 {
-    public static self $instance; // instance of the class Database
-    protected static ?PDO $connection=null; // database connection
-    protected \PDOStatement $stm; //prepared SQL query
-
+    protected static ?PDO $connection = null; // database connection
 
     /**
      * The function creates a connection to a database
      */
-    private function connect(): void
+    private static function connect(): void
     {
         $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8';
         try {
@@ -29,14 +27,13 @@ class Database
     }
 
     /**
-     * The function creates a single connection to the database and an instance of the Database class
-     * @return PDO|null - database connection
+     * The function creates a single connection to the database
+     * @return PDO|null
      */
     public static function getConnection(): ?PDO
     {
         if (self::$connection === null) {
-            self::$instance = new self();
-            self::$instance->connect();
+            self::connect();
         }
 
         return self::$connection;
@@ -45,41 +42,37 @@ class Database
     /**
      * The function does a query to a database
      * @param string $query - a string containing the SQL query
-     * @param array $data - query parameters
-     * @return Database
+     * @return PDOStatement|false
      */
-    public function query(string $query, array $data = []): static
+    public function query(string $query): bool|PDOStatement
     {
-        $this->stm = self::$connection->prepare($query);
-        $this->stm->execute($data);
-
-        return $this;
+        return self::$connection->prepare($query);
     }
 
-    /**
-     * The function retrieves all records from a prepared SQL query
-     * @return bool|array
-     */
-    public function getAll(): bool|array
-    {
-        return $this->stm->fetchAll();
-    }
-
-    /**
-     * The function retrieves all records from the first column from a prepared SQL query
-     * @return bool|array
-     */
-    public function getColumn(): bool|array
-    {
-        return $this->stm->fetchAll(PDO::FETCH_COLUMN);
-    }
-
-    /**
-     * The function retrieves one records from the first column from a prepared SQL query
-     * @return mixed
-     */
-    public function getOne(): mixed
-    {
-        return $this->stm->fetch();
-    }
+//    /**
+//     * The function retrieves all records from a prepared SQL query
+//     * @return bool|array
+//     */
+//    public function getAll(): bool|array
+//    {
+//        return $this->fetchAll();
+//    }
+//
+//    /**
+//     * The function retrieves all records from the first column from a prepared SQL query
+//     * @return bool|array
+//     */
+//    public function getColumn(): bool|array
+//    {
+//        return $this->stm->fetchAll(PDO::FETCH_COLUMN);
+//    }
+//
+//    /**
+//     * The function retrieves one records from the first column from a prepared SQL query
+//     * @return mixed
+//     */
+//    public function getOne(): mixed
+//    {
+//        return $this->stm->fetch();
+//    }
 }
