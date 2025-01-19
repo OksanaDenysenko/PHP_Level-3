@@ -2,10 +2,13 @@
 
 namespace Database\Seeder;
 
+use App\Repository\BookRepository;
 use Core\Data\Seeder;
 
 class BooksSeeder extends Seeder
 {
+    protected const NAME_REPOSITORY='BookRepository';
+
     /**
      * The function contains an array of data and runs seed() to insert the data
      * @return void

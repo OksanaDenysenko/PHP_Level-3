@@ -1,8 +1,7 @@
 <?php
 
 use Database\Seeder\{BooksSeeder,AuthorsSeeder,BookAuthorSeeder};
-use App\Repository\{BookRepository,AuthorRepository,BookAuthorRepository};
 
-(new BooksSeeder(new BookRepository()))->run();
-(new AuthorsSeeder(new AuthorRepository()))->run();
-(new BookAuthorSeeder(new BookAuthorRepository()))->run();
+(new BooksSeeder)->run();
+(new AuthorsSeeder)->run();
+(new BookAuthorSeeder)->run();

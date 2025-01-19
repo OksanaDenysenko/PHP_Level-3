@@ -6,6 +6,8 @@ use Core\Data\Seeder;
 
 class AuthorsSeeder extends Seeder
 {
+    protected const NAME_REPOSITORY='AuthorRepository';
+
     /**
      * The function contains an array of data and runs seed() to insert the data
      * @return void

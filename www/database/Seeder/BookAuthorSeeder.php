@@ -6,6 +6,8 @@ use Core\Data\Seeder;
 
 class BookAuthorSeeder extends Seeder
 {
+    protected const NAME_REPOSITORY='BookAuthorRepository';
+
     /**
      * The function contains an array of data and runs seed() to insert the data
      * @return void

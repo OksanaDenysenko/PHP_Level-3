@@ -2,13 +2,17 @@
 
 namespace Core\Data;
 
+use App\Repository\BookRepository;
+
 abstract class Seeder
 {
     protected Repository $repository; //object of the corresponding repository
+    protected const NAME_REPOSITORY='';
 
-    public function __construct(Repository $repository)
+    public function __construct()
     {
-        $this->repository = $repository;
+        $nameRepository='App\Repository\\' . static::NAME_REPOSITORY;
+        $this->repository = new $nameRepository;
     }
 
     /**
