@@ -2,11 +2,12 @@
 
 namespace Database\Seeder;
 
+use App\Repository\AuthorRepository;
 use Core\Data\Seeder;
 
 class AuthorsSeeder extends Seeder
 {
-    protected const NAME_REPOSITORY='AuthorRepository';
+    protected const NAME_REPOSITORY=AuthorRepository::class;
 
     /**
      * The function contains an array of data and runs seed() to insert the data
@@ -14,7 +15,7 @@ class AuthorsSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = [
+        $this->seed([
             ['full_name' => 'Андрей Богуславский'],
             ['full_name' => 'Марк Саммерфильд'],
             ['full_name' => 'М.Вильямс'],
@@ -44,8 +45,6 @@ class AuthorsSeeder extends Seeder
             ['full_name' => 'Прамодкумар Дж. Садаладж'],
             ['full_name' => 'Джей Макгаврен'],
             ['full_name' => 'Дрю Нейл'],
-        ];
-
-        $this->seed($data);
+        ]);
     }
 }

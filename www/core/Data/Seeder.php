@@ -11,15 +11,15 @@ abstract class Seeder
 
     public function __construct()
     {
-        $nameRepository='App\Repository\\' . static::NAME_REPOSITORY;
-        $this->repository = new $nameRepository;
+        $repository= static::NAME_REPOSITORY;
+        $this->repository = new $repository;
     }
 
     /**
      * The function starts the process of filling the table with data
      * @return void
      */
-   abstract public function run(): void;
+    abstract public function run(): void;
 
     /**
      * The function processes the data array and executes an SQL query to insert data into the table
@@ -32,5 +32,4 @@ abstract class Seeder
             $this->repository->insert($item);
         }
     }
-
 }

@@ -25,7 +25,7 @@ abstract class Repository
      * @param string $nameColumns - the list of fields to be output. All fields will be selected by default.
      * @return bool|array
      */
-    public function findAll(string $nameColumns = '*'): bool|array
+    public function getAll(string $nameColumns = '*'): bool|array
     {
         return Database::getConnection()->query("SELECT $nameColumns FROM " . static::TABLE_NAME)->fetchAll();
     }
@@ -52,7 +52,6 @@ abstract class Repository
     public function update(int $id, array $data): void
     {
         $keys = array_keys($data);
-
         $query = 'UPDATE ' . static::TABLE_NAME . ' SET ';
 
         foreach ($keys as $key) {
@@ -60,7 +59,6 @@ abstract class Repository
         }
 
         $query = rtrim($query, ", ") . " WHERE id=:id";
-
         $data['id'] = $id;
 
         Database::getConnection()->prepare($query, $data)->execute($data);

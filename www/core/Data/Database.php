@@ -3,8 +3,6 @@
 namespace Core\Data;
 
 use PDO;
-use PDOStatement;
-
 
 class Database
 {
@@ -39,15 +37,15 @@ class Database
         return self::$connection;
     }
 
-    /**
-     * The function does a query to a database
-     * @param string $query - a string containing the SQL query
-     * @return PDOStatement|false
-     */
-    public function query(string $query): bool|PDOStatement
-    {
-        return self::$connection->prepare($query);
-    }
+//    /**
+//     * The function does a query to a database
+//     * @param string $query - a string containing the SQL query
+//     * @return PDOStatement|false
+//     */
+//    public function query(string $query): bool|PDOStatement
+//    {
+//        return self::$connection->prepare($query);
+//    }
 
 //    /**
 //     * The function retrieves all records from a prepared SQL query
