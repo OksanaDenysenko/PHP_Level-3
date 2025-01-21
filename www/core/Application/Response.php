@@ -4,7 +4,7 @@ namespace Core\Application;
 
 class Response
 {
-        public static function response(int $statusCode, $logError = null): void
+        public static function response(int $statusCode): void
     {
         $message = match ($statusCode) {
             200 => 'OK',
@@ -16,9 +16,5 @@ class Response
 
         http_response_code($statusCode);
         echo json_encode([$statusCode => $message]);
-
-        if (isset($logError)) {
-            error_log('[' . date('Y-m-d H:i:s') . '] Response: ' . $logError . PHP_EOL, 3, ERROR_LOGS);
-        }
     }
 }

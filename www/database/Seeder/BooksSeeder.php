@@ -5,15 +5,17 @@ namespace Database\Seeder;
 use App\Repository\BookRepository;
 use Core\Data\Seeder;
 
-class SeederBooks extends Seeder
+class BooksSeeder extends Seeder
 {
+    protected const NAME_REPOSITORY=BookRepository::class;
+
     /**
      * The function contains an array of data and runs seed() to insert the data
      * @return void
      */
     public function run(): void
     {
-        $data = [
+        $this->seed([
             ['title' => 'СИ++ И КОМПЬЮТЕРНАЯ ГРАФИКА', 'content' => 'Лекции и практикум по программированию на Си++', 'year' => 2023, 'number_of_pages' => 200, 'image' => IMAGES_DIR . '/1.jpg'],
             ['title' => 'Программирование на языке Go!', 'content' => '', 'year' => 2022, 'number_of_pages' => 150, 'image' => IMAGES_DIR . '/2.jpg'],
             ['title' => 'Толковый словарь сетевых терминов и аббревиатур', 'content' => '', 'year' => 2023, 'number_of_pages' => 150, 'image' => IMAGES_DIR . '/3.jpg'],
@@ -38,8 +40,6 @@ class SeederBooks extends Seeder
             ['title' => 'NoSQL Distilled: A Brief Guide to the Emerging World of Polyglot Persistence', 'content' => '', 'year' => 2022, 'number_of_pages' => 150, 'image' => IMAGES_DIR . '/22.jpg'],
             ['title' => 'Head First Ruby', 'content' => 'Програмування', 'year' => 2022, 'number_of_pages' => 150, 'image' => IMAGES_DIR . '/23.jpg'],
             ['title' => 'Practical Vim', 'content' => 'Програмування', 'year' => 2022, 'number_of_pages' => 150, 'image' => IMAGES_DIR . '/24.jpg'],
-        ];
-
-        $this->seed(new BookRepository(),$data);
+        ]);
     }
 }

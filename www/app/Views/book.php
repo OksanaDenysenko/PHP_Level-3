@@ -1,15 +1,6 @@
 <section id="main" class="main-wrapper">
     <div class="container">
         <div id="content" class="book_block col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <?php
-            //show($data);
-            $id = $data['id'];
-            $title = $data['title'];
-            $content=$data['content'];
-            $year=$data['year'];
-            $pages=$data['number_of_pages'];
-            $authors = $data['authors'];
-            ?>
             <script id="pattern" type="text/template">
                 <div data-book-id="{id}" class="book_item col-xs-6 col-sm-3 col-md-2 col-lg-2">
                     <div class="book">
@@ -25,23 +16,23 @@
                     </div>
                 </div>
             </script>
-            <div id="id" book-id="<?= $id ?>">
+            <div id="id" book-id="<?= $data['id'] ?>">
                 <div id="bookImg" class="col-xs-12 col-sm-3 col-md-3 item" style="
     margin:;
-"><img src="/assets/images/<?= $id ?>.jpg" alt="Responsive image" class="img-responsive">
+"><img src="/assets/images/<?= $data['id'] ?>.jpg" alt="Responsive image" class="img-responsive">
 
                     <hr>
                 </div>
                 <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9 info">
                     <div class="bookInfo col-md-12">
-                        <div id="title" class="titleBook"><?= $title ?></div>
+                        <div id="title" class="titleBook"><?= $data['title'] ?></div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="bookLastInfo">
-                            <div class="bookRow"><span class="properties">автор:</span><span id="author"><?= $authors ?></span>
+                            <div class="bookRow"><span class="properties">автор:</span><span id="author"><?= $data['authors'] ?></span>
                             </div>
-                            <div class="bookRow"><span class="properties">год:</span><span id="year"><?= $year ?></span></div>
-                            <div class="bookRow"><span class="properties">страниц:</span><span id="pages"><?= $pages ?></span>
+                            <div class="bookRow"><span class="properties">год:</span><span id="year"><?= $data['year'] ?></span></div>
+                            <div class="bookRow"><span class="properties">страниц:</span><span id="pages"><?= $data['number_of_pages'] ?></span>
                             </div>
                             <div class="bookRow"><span class="properties">isbn:</span><span id="isbn"></span></div>
                         </div>
@@ -52,16 +43,16 @@
                     <div class="bookDescription col-xs-12 col-sm-12 col-md-12 hidden-xs hidden-sm">
                         <h4>О книге</h4>
                         <hr>
-                        <p id="description"><?= $content ?></p>
+                        <p id="description"><?= $data['content'] ?></p>
                     </div>
                 </div>
                 <div class="bookDescription col-xs-12 col-sm-12 col-md-12 hidden-md hidden-lg">
                     <h4>О книге</h4>
                     <hr>
-                    <p class="description"><?= $content ?></p>
+                    <p class="description"><?= $data['content'] ?></p>
                 </div>
             </div>
-            <script src="/book-page_files/book.js" defer=""></script>
+            <script src="/assets/js/book.js" defer=""></script>
         </div>
     </div>
 </section>

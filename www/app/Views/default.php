@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
           crossorigin="anonymous"/>
 
-    <link rel="shortcut icon" href="http://localhost:3000/favicon.ico">
+    <link rel="shortcut icon" href="http://localhost/favicon.ico">
     <style>
         .details {
             display: none;
@@ -29,7 +29,7 @@
     <nav class="navbar navbar-default">
         <div class="container">
             <div class="col-xs-5 col-sm-2 col-md-2 col-lg-2">
-                <div class="logo"><a href="http://localhost:3000/" class="navbar-brand"><span class="sh">Ш</span><span
+                <div class="logo"><a href="http://localhost/" class="navbar-brand"><span class="sh">Ш</span><span
                             class="plus">++</span></a></div>
             </div>
             <div class="col-xs-12 col-sm-7 col-md-8 col-lg-8">
@@ -47,7 +47,7 @@
                                     })
                                 </script>
 
-                                <div class="loader"><img src="./assets/images/loading.gif"></div>
+                                <div class="loader"><img src="/assets/images/loading.gif"></div>
                                 <div id="list" size="" class="bAutoComplete mSearchAutoComplete"></div>
                             </div>
                         </form>
