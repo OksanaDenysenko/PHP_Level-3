@@ -54,7 +54,7 @@ class Handler
      * @param $statusCode - http status codes
      * @return void
      */
-    #[NoReturn] private function response($message, $statusCode): void
+    #[NoReturn] private function response(string $message, int $statusCode): void
     {
         http_response_code($statusCode);
         echo json_encode([$message => $statusCode]);
