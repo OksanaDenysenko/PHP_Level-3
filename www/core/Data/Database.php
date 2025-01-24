@@ -14,14 +14,16 @@ class Database
     private static function connect(): void
     {
         $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8';
-        try {
-            self::$connection = new PDO($dsn, DB_USER, DB_PASS);
-        } catch (\PDOException $e) {
-            \Core\Application\Response::response(500);
+        self::$connection = new PDO($dsn, DB_USER, DB_PASS);
 
-            error_log('[' . date('Y-m-d H:i:s') . '] 
-                       Response: ' . $e->getMessage() . PHP_EOL, 3, ERROR_LOGS);
-        }
+//        try {
+//            self::$connection = new PDO($dsn, DB_USER, DB_PASS);
+//        } catch (\PDOException $e) {
+//            \Core\Application\Response::response(500);
+//
+//            error_log('[' . date('Y-m-d H:i:s') . ']
+//                       Response: ' . $e->getMessage() . PHP_EOL, 3, ERROR_LOGS);
+//        }
     }
 
     /**
