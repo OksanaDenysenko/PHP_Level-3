@@ -1,6 +1,9 @@
 <?php
 
-// log file
+//config DB
+const CONFIG_DB_FILE=__DIR__.'/../Data/.env';
+
+//log file
 const ERROR_LOGS = __DIR__ . '/../../tmp/error.log';
 
 //migrations

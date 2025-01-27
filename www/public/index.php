@@ -1,16 +1,15 @@
 <?php
 
-use Core\Application\Router;
+use Core\Application\{Router,Handler,StatusCode};
 
 session_start();
 
 require_once __DIR__ . '/../core/Application/config.php';
-require_once __DIR__ . '/../core/Data/configDB.php';
 require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/../core/functions.php';
 require_once __DIR__ . '/../routers/routers.php';
 
-$handler=new \Core\Application\Handler(); //error handler
+$handler=new Handler; //error handler
 
 try {
     Router::getController();
@@ -18,7 +17,7 @@ try {
     $handler->exceptionHandler($e);
 }
 
-http_response_code(\Core\Application\StatusCode::OK->value);
+http_response_code(StatusCode::OK->value);
 
 
 
