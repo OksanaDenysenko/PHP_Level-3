@@ -8,4 +8,4 @@ www/tmp/error.log
 www/public/assets/bootstrap-5.3.3-dist/
 www/app/Controllers/Admin/Test.php
 www/app/Views/admin/test.php
-www/core/Data/.env
+www/.env
