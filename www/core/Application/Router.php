@@ -80,7 +80,6 @@ class Router
         $routesOfThisMethod = self::$routes[$method];
 
         foreach ($routesOfThisMethod as $route) {
-
             if (preg_match("#^{$route['uri']}$#", $uri, $matches)) {
                 $nameController = $route['controller'];
                 $action = $route['action'];
@@ -114,7 +113,6 @@ class Router
         $objectController = new $namespaceController;
 
         if (method_exists($objectController, $action)) {
-
             $objectController->$action($id);
 
             return;

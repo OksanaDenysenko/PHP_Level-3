@@ -1,7 +1,7 @@
 <?php
 
-//config DB
-const CONFIG_DB_FILE=__DIR__.'/../Data/.env';
+//.env file(config DB, ...)
+const CONFIG_ENV_FILE= __DIR__ . '/../../.env';
 
 //log file
 const ERROR_LOGS = __DIR__ . '/../../tmp/error.log';

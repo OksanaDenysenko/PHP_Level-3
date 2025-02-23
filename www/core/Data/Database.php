@@ -13,15 +13,8 @@ class Database
      */
     private static function connect(): void
     {
-        $env = new EvnIterator(CONFIG_DB_FILE);
-        $data=[];
-
-        foreach ($env as $key => $value) {
-            $data[$key] = $value;
-        }
-
-        $dsn = 'mysql:host=' . $data['DB_HOST'] . ';dbname=' . $data['DB_NAME'] . ';charset=utf8';
-        self::$connection = new PDO($dsn, $data['DB_USER'], $data['DB_PASS']);
+        $dsn = 'mysql:host=' . $_ENV['database']['DB_HOST'] . ';dbname=' . $_ENV['database']['DB_NAME'] . ';charset=utf8';
+        self::$connection = new PDO($dsn, $_ENV['database']['DB_USER'], $_ENV['database']['DB_PASS']);
     }
 
     /**

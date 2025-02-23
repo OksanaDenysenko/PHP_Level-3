@@ -39,7 +39,13 @@ class Handler
     {
         //  show("This set_exception_handler");
         $this->logError($e->getMessage(), $e->getFile(), $e->getLine());
-        $httpCodes = StatusCode::getArrayStatusCodes();
+
+        // Який варіант кращий?
+        //Це 1 варіант
+        $httpCodes = json_decode(json_encode(array_values(StatusCode::cases())));
+
+        //Це другий
+        //$httpCodes = array_column(StatusCode::cases(), 'value');
 
         if (in_array($e->getCode(), $httpCodes)) {
             $this->response($e->getMessage(), $e->getCode());
