@@ -13,8 +13,8 @@ class Database
      */
     private static function connect(): void
     {
-        $dsn = 'mysql:host=' . $_ENV['database']['DB_HOST'] . ';dbname=' . $_ENV['database']['DB_NAME'] . ';charset=utf8';
-        self::$connection = new PDO($dsn, $_ENV['database']['DB_USER'], $_ENV['database']['DB_PASS']);
+        $dsn = 'mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] .';dbname=' . $_ENV['DB_NAME'] . ';charset=utf8';
+        self::$connection = new PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASS']);
     }
 
     /**

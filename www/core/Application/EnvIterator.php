@@ -2,11 +2,10 @@
 
 namespace Core\Application;
 
-class EvnIterator implements \Iterator
+class EnvIterator implements \Iterator
 {
     private $file;
-    private int|string $section;
-    private int|string $key;
+    private string $key;
     private mixed $value;
 
     public function __construct(string $file)
@@ -41,14 +40,7 @@ class EvnIterator implements \Iterator
             return;
         }
 
-        if (str_starts_with($line, '[') && str_ends_with($line, ']')) {
-            $this->section = trim($line, "[]");
-            $this->next();
-
-            return;
-        }
-
-        list($key, $value) = explode('=', $line);
+        [$key, $value] = explode('=', $line);
         $this->key = trim($key);
         $this->value = trim($value);
     }
@@ -59,7 +51,7 @@ class EvnIterator implements \Iterator
      */
     public function key(): string
     {
-        return ($this->section . "." . $this->key);
+        return ($this->key);
     }
 
     /**
@@ -68,10 +60,6 @@ class EvnIterator implements \Iterator
      */
     public function valid(): bool
     {
-        if (ftell($this->file) === 0) { // line not yet read
-            $this->next();
-        }
-
         if (feof($this->file)) { // end of file
             fclose($this->file);
 
@@ -88,8 +76,7 @@ class EvnIterator implements \Iterator
     public function rewind(): void
     {
         rewind($this->file); // the pointer is set to the beginning of the file
-        $this->key = null | 0;
-        $this->value = null;
-        $this->section = null | 0;
+        $this->key = '';
+        $this->value = '';
     }
 }

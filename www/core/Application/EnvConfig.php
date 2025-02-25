@@ -4,8 +4,9 @@ namespace Core\Application;
 
 class EnvConfig
 {
-    public function __construct(string $file)
-    {
+    private static ?EnvConfig $instance=null;
+
+    private function __construct($file) {
         $this->loadEnv($file);
     }
 
@@ -15,14 +16,25 @@ class EnvConfig
      */
     private function loadEnv($file): void
     {
-        $iterator = new EvnIterator($file);
+        $iterator = new EnvIterator($file);
 
         foreach ($iterator as $key => $value) {
 
-            if ($key !== null) {
-                $key = explode(".", $key);
-                $_ENV[$key[0]][$key[1]] = $value;
+            if (!empty($key)) {
+                $_ENV[$key] = $value;
             }
         }
+    }
+
+    /**
+     * The function is responsible for creating only a single instance of the class
+     */
+    public static function getInstance($file): EnvConfig
+    {
+        if (self::$instance === null) {
+            self::$instance = new self($file);
+        }
+
+        return self::$instance;
     }
 }
