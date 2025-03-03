@@ -5,6 +5,7 @@ namespace Core\Application;
 class EnvConfig
 {
     private static ?EnvConfig $instance=null;
+    private static array $env=[];
 
     private function __construct($file) {
         $this->loadEnv($file);
@@ -21,9 +22,20 @@ class EnvConfig
         foreach ($iterator as $key => $value) {
 
             if (!empty($key)) {
-                $_ENV[$key] = $value;
+                self::$env[$key] = $value;
             }
         }
+    }
+
+    /**
+     * The function gets the value of the environment variable by its key
+     * @param string $key - the key of the environment variable in the array
+     * @param $default
+     * @return mixed|null
+     */
+    public static function get(string $key, $default=null): mixed
+    {
+        return self::$env[$key]??$default;
     }
 
     /**
