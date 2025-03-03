@@ -29,7 +29,7 @@ class EnvConfig
     /**
      * The function is responsible for creating only a single instance of the class
      */
-    public static function getInstance($file): EnvConfig
+    public static function instantiate($file): EnvConfig
     {
         if (self::$instance === null) {
             self::$instance = new self($file);
