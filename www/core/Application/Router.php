@@ -84,8 +84,8 @@ class Router
                 $nameController = $route['controller'];
                 $action = $route['action'];
 
-                if (!empty($matches["id"])) {
-                    self::callControllerAction($nameController, $action, $matches["id"]);
+                if (!empty($matches['number'])) {
+                    self::callControllerAction($nameController, $action, $matches['number']);
 
                     return;
                 }

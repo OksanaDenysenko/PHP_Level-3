@@ -10,5 +10,8 @@
         </div>
     </div>
 
-    <center>оопс... в этом хтмл не реализованы кнопки "вперед" и "назад", а книг на странице должно быть не больше 20
-    </center>
+    <div class="text-center">
+        <?php
+        require 'pagination.php';
+        ?>
+    </div>
