@@ -2,8 +2,7 @@
 
 namespace Core\Application;
 
-
-use Core\Application;
+use Exception;
 
 class Router
 {
@@ -69,10 +68,10 @@ class Router
         self::$routes['PATCH'][] = compact('uri', 'controller', 'action');
     }
 
-
     /**
      * The function specifies the controller and action which need to be used to handle the http request
      * @return void
+     * @throws Exception
      */
     public static function getController(): void
     {
@@ -81,7 +80,6 @@ class Router
         $routesOfThisMethod = self::$routes[$method];
 
         foreach ($routesOfThisMethod as $route) {
-
             if (preg_match("#^{$route['uri']}$#", $uri, $matches)) {
                 $nameController = $route['controller'];
                 $action = $route['action'];
@@ -98,10 +96,8 @@ class Router
             }
         }
 
-        Application\Response::response(404);
-
+        throw new Exception(StatusCode::Page_Not_Found->name,StatusCode::Page_Not_Found->value);
     }
-
 
     /**
      * The function creates an instance of the controller class and calls the controller method
@@ -109,6 +105,7 @@ class Router
      * @param string $action - function in the class $controller
      * @param int|null $id
      * @return void
+     * @throws Exception
      */
     private static function callControllerAction(string $nameController, string $action, int $id = null): void
     {
@@ -116,12 +113,11 @@ class Router
         $objectController = new $namespaceController;
 
         if (method_exists($objectController, $action)) {
-
             $objectController->$action($id);
 
             return;
         }
 
-        Application\Response::response(404);
+        throw new Exception(StatusCode::Page_Not_Found->name,StatusCode::Page_Not_Found->value);
     }
 }
