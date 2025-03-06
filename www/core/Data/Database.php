@@ -2,6 +2,7 @@
 
 namespace Core\Data;
 
+use Core\Application\EnvConfig;
 use PDO;
 
 class Database
@@ -13,8 +14,8 @@ class Database
      */
     private static function connect(): void
     {
-        $dsn = 'mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] .';dbname=' . $_ENV['DB_NAME'] . ';charset=utf8';
-        self::$connection = new PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASS']);
+        $dsn = 'mysql:host=' . EnvConfig::get('DB_HOST') . ';port=' . EnvConfig::get('DB_PORT') .';dbname=' . EnvConfig::get('DB_NAME') . ';charset=utf8';
+        self::$connection = new PDO($dsn, EnvConfig::get('DB_USER'), EnvConfig::get('DB_PASS'));
     }
 
     /**

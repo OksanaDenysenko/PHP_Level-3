@@ -10,7 +10,7 @@ require_once __DIR__ . '/../core/functions.php';
 require_once __DIR__ . '/../routers/routers.php';
 
 $handler = new Handler; //error handler
-EnvConfig::getInstance(CONFIG_ENV_FILE);
+EnvConfig::instantiate(CONFIG_ENV_FILE);
 
 try {
     Router::getController();
