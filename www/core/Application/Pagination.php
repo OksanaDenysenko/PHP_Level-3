@@ -30,7 +30,7 @@ class Pagination
      */
     public function getPaginationData(): array
     {
-        $currentPage = $this->currentPage;
+        //$currentPage = $this->currentPage;
         $back = '';
         $forward = null;
         $startPage = null;
@@ -40,40 +40,51 @@ class Pagination
         $page2right = null; // link to second page on right
         $page1right = null; // link to first page on right
 
-        if ($currentPage > 1) {
-            $back = $this->getLink($currentPage - 1);
+        if ($this->currentPage> 1) {
+            $back = $this->getLink($this->currentPage - 1);
         }
 
-        if ($currentPage < $this->countPages) {
-            $forward = $this->getLink($currentPage + 1);
+        if ($this->currentPage < $this->countPages) {
+            $forward = $this->getLink($this->currentPage + 1);
         }
 
-        if ($currentPage > 3) {
+        if ($this->currentPage > 3) {
             $startPage = $this->getLink(1);
         }
 
-        if ($currentPage < ($this->countPages - 2)) {
+        if ($this->currentPage < ($this->countPages - 2)) {
             $endPage = $this->getLink($this->countPages);
         }
 
-        if (($currentPage - 2) > 0) {
-            $page2left = $this->getLink($currentPage - 2);
+        if (($this->currentPage - 2) > 0) {
+            $page2left = $this->getLink($this->currentPage - 2);
         }
 
-        if (($currentPage - 1) > 0) {
-            $page1left = $this->getLink($currentPage - 1);
+        if (($this->currentPage - 1) > 0) {
+            $page1left = $this->getLink($this->currentPage - 1);
         }
 
-        if (($currentPage + 1) <= $this->countPages) {
-            $page1right = $this->getLink($currentPage + 1);
+        if (($this->currentPage + 1) <= $this->countPages) {
+            $page1right = $this->getLink($this->currentPage + 1);
         }
 
-        if (($currentPage + 2) <= $this->countPages) {
-            $page2right = $this->getLink($currentPage + 2);
+        if (($this->currentPage + 2) <= $this->countPages) {
+            $page2right = $this->getLink($this->currentPage + 2);
         }
 
-        return compact("currentPage", "back", "forward", "startPage", "endPage",
-            "page2left", "page1left", "page2right", "page1right");
+//        return compact("currentPage", "back", "forward", "startPage", "endPage",
+//            "page2left", "page1left", "page2right", "page1right");
+        return [
+            'currentPage' => $this->currentPage,
+            'back' => $back,
+            'forward' => $forward,
+            'startPage' => $startPage,
+            'endPage' => $endPage,
+            'page2left' => $page2left,
+            'page1left' => $page1left,
+            'page2right' => $page2right,
+            'page1right' => $page1right,
+        ];
     }
 
     /**
@@ -128,8 +139,7 @@ class Pagination
      */
     protected function getUri(): string
     {
-        $url = htmlspecialchars(strip_tags($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-        $url = parse_url(htmlspecialchars_decode($url));
+        $url = parse_url(strip_tags($_SERVER['REQUEST_URI']));
         $uri = $url["path"];
 
         if (!empty($url["query"])) {

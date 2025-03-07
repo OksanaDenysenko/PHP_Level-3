@@ -1,64 +1,65 @@
 <nav aria-label="Page navigation example">
     <ul class="pagination">
         <?php
-        if (!empty($pagination["startPage"])) {
-            echo '<li class="page-item">
-                    <a class="page-link" href="' . $pagination["startPage"] . '" aria-label="Start page">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                  </li>';
+
+        if (!empty($data["pagination"]["startPage"])) {
+            $link = $data["pagination"]["startPage"];
+            $ariaLabel = "Start page";
+            $label = "<<";
+            require 'pagination_item.php';
         }
 
-        if (!empty($pagination["back"])) {
-            echo '<li class="page-item">
-                    <a class="page-link" href="' . $pagination["back"] . '" aria-label="Previous page">
-                        <span aria-hidden="true">&lt;</span>
-                    </a>
-                  </li>';
+        if (!empty($data["pagination"]["back"])) {
+            $link=$data["pagination"]["back"];
+            $ariaLabel = "Previous page";
+            $label = "<";
+            require 'pagination_item.php';
         }
 
-        if (!empty($pagination["page2left"])) {
-            echo '<li class="page-item">
-                        <a class="page-link" href="' . $pagination["page2left"] . '">'.($pagination["currentPage"]-2).'</a>
-                  </li>';
+        if (!empty($data["pagination"]["page2left"])) {
+            $link = $data["pagination"]["page2left"];
+            $ariaLabel = "";
+            $label = $data["pagination"]["currentPage"] - 2;
+            require 'pagination_item.php';
         }
 
-        if (!empty($pagination["page1left"])) {
-            echo '<li class="page-item">
-                        <a class="page-link" href="' . $pagination["page1left"] . '">'.($pagination["currentPage"]-1).'</a>
-                  </li>';
+        if (!empty($data["pagination"]["page1left"])) {
+            $link = $data["pagination"]["page1left"];
+            $ariaLabel = "";
+            $label = $data["pagination"]["currentPage"] - 1;
+            require 'pagination_item.php';
         }
         ?>
 
-        <li class="page-item active"><a class="page-link" ><?= $pagination['currentPage'] ?></a></li>
+        <li class="page-item active"><a class="page-link"><?= $data["pagination"]['currentPage'] ?></a></li>
 
         <?php
-        if (!empty($pagination["page1right"])) {
-            echo '<li class="page-item">
-                        <a class="page-link" href="' . $pagination["page1right"] . '">'.($pagination["currentPage"]+1).'</a>
-                  </li>';
+        if (!empty($data["pagination"]["page1right"])) {
+            $link = $data["pagination"]["page1right"];
+            $ariaLabel = "";
+            $label = $data["pagination"]["currentPage"] + 1;
+            require 'pagination_item.php';
         }
 
-        if (!empty($pagination["page2right"])) {
-            echo '<li class="page-item">
-                        <a class="page-link" href="' . $pagination["page2right"] . '">'.($pagination["currentPage"]+2).'</a>
-                  </li>';
+        if (!empty($data["pagination"]["page2right"])) {
+            $link = $data["pagination"]["page2right"];
+            $ariaLabel = "";
+            $label = $data["pagination"]["currentPage"] + 2;
+            require 'pagination_item.php';
         }
 
-        if (!empty($pagination["forward"])) {
-            echo '<li class="page-item">
-                    <a class="page-link" href="' . $pagination["forward"] . '" aria-label="Next page">
-                        <span aria-hidden="true">&gt;</span>
-                    </a>
-                  </li>';
+        if (!empty($data["pagination"]["forward"])) {
+            $link = $data["pagination"]["forward"];
+            $ariaLabel = "Next page";
+            $label = ">";
+            require 'pagination_item.php';
         }
 
-        if (!empty($pagination["endPage"])) {
-            echo ' <li class="page-item">
-                        <a class="page-link" href="' . $pagination["endPage"] . '" aria-label="End page">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                   </li>';
+        if (!empty($data["pagination"]["endPage"])) {
+            $link = $data["pagination"]["endPage"];
+            $ariaLabel = "End page";
+            $label = ">>";
+            require 'pagination_item.php';
         }
         ?>
     </ul>

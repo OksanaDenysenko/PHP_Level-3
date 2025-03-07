@@ -12,11 +12,10 @@ class Controller
      *
      * @param string $view - the name of the view to load
      * @param array $data
-     * @param array $pagination
      * @return void
      * @throws Exception
      */
-    public function view(string $view, array $data = [], array $pagination=[]): void
+    public function view(string $view, array $data = []): void
     {
 
         $filename = VIEWS_DIR . "/$view.php";
