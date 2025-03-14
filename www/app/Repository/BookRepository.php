@@ -2,23 +2,30 @@
 
 namespace App\Repository;
 
-use Core\Application\Pagination;
+use Core\Application\Paginator;
+use Core\Application\StatusCode;
 use Core\Data\Database;
 use Core\Data\Repository;
-use PDO;
+use Exception;
 
 class BookRepository extends Repository
 {
     protected const TABLE_NAME = 'books';
 
     /**
-     * The function retrieves data about all books along with their authors in one query
+     * The function creates and returns a Paginator object for pagination
+     * of the results of a SQL query that retrieves information about books and their authors
      * @param int $limit - is the number of records to retrieve
-     * @return bool|array
+     * @return Paginator
      * @throws \Exception
      */
-    public function getBooksWithAuthors(int $limit = 0): bool|array
+    public function getBooksWithAuthors(int $limit): Paginator
     {
+        if ($limit <= 0) {
+
+            throw new Exception(StatusCode::Server_Error->name, StatusCode::Server_Error->value);
+        }
+
         $sql = "SELECT b.id, b.title, 
               GROUP_CONCAT(a.full_name SEPARATOR ', ') AS authors
               FROM books b
@@ -26,22 +33,23 @@ class BookRepository extends Repository
               INNER JOIN authors a ON ba.author_id = a.id
               GROUP BY b.id";
 
-        if ($limit > 0) {
-            $totalRecords=Database::getConnection()->query(
-                "SELECT COUNT(*)FROM ($sql) AS count")->fetchColumn();
-            $pagination = new Pagination($totalRecords,$limit);
-            $offset=$pagination->getOffset();
-            $sql = $sql . " LIMIT :limit OFFSET :offset";
-            $stm = Database::getConnection()->prepare($sql);
-            $stm->bindParam(':limit', $limit, PDO::PARAM_INT);
-            $stm->bindParam(':offset', $offset, PDO::PARAM_INT);
-            $stm->execute();
+        $totalRecords=$this->getTotalBooksWithAuthors();
 
-            return ["books"=>$stm->fetchAll(),
-                "pagination"=>$pagination->getPaginationData()];
-        }
+        return new Paginator(Database::getConnection(), $sql, $limit, $totalRecords);
+    }
 
-        return Database::getConnection()->query($sql)->fetchAll();
+    /**
+     * The function counts the total number of unique books that have authors
+     * @return int
+     */
+    public function getTotalBooksWithAuthors(): int
+    {
+        $sql = "SELECT COUNT(DISTINCT b.id)
+                FROM books b
+                INNER JOIN book_author ba ON b.id = ba.book_id
+                INNER JOIN authors a ON ba.author_id = a.id";
+
+        return Database::getConnection()->query($sql)->fetchColumn();
     }
 
     /**

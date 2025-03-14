@@ -13,7 +13,9 @@ class BooksController extends Controller
     function index(): void
     {
         $limit = 20; //number of entries per page
-        $this->view('books', (new BookRepository())->getBooksWithAuthors($limit));
+        $paginator=(new BookRepository())->getBooksWithAuthors($limit);
+        $this->view('books',
+            ["books"=>$paginator->getItems(),"pagination"=>$paginator->getPaginationData()]);
 
         require DEFAULT_TEMPLATE;
     }
