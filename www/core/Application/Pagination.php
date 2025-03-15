@@ -9,18 +9,14 @@ class Pagination
     protected int $countPages;
     protected int $currentPage;
     protected string $uri;
-    protected int $perPage;
-    protected int $totalRecords;
 
     /**
      * @throws Exception
      */
-    public function __construct(int $totalRecords, int $perPage)
+    public function __construct(int $countPages, int $currentPage)
     {
-        $this->perPage = $perPage;
-        $this->totalRecords = $totalRecords;
-        $this->countPages = $this->getCountPages();
-        $this->currentPage = $this->getCurrentPage();
+        $this->countPages = $countPages;
+        $this->currentPage = $currentPage;
         $this->uri = $this->getUri();
     }
 
@@ -30,61 +26,18 @@ class Pagination
      */
     public function getPaginationData(): array
     {
-        //$currentPage = $this->currentPage;
-        $back = '';
-        $forward = null;
-        $startPage = null;
-        $endPage = null;
-        $page2left = null; // link to second page on left
-        $page1left = null; // link to first page on left
-        $page2right = null; // link to second page on right
-        $page1right = null; // link to first page on right
+        $links = [];
+        $links['currentPage'] = $this->currentPage;
+        $links['back']=($this->currentPage > 1)?$this->getLink($this->currentPage - 1):'';
+        $links['forward'] =($this->currentPage < $this->countPages)?$this->getLink($this->currentPage + 1):'';
+        $links['startPage'] =($this->currentPage > 3)?$this->getLink(1):'';
+        $links['endPage']=($this->currentPage < ($this->countPages - 2))?$this->getLink($this->countPages):'';
+        $links['page2left']=(($this->currentPage - 2) > 0)?$this->getLink($this->currentPage - 2):'';
+        $links['page1left']=(($this->currentPage - 1) > 0)?$this->getLink($this->currentPage - 1):'';
+        $links['page1right']=(($this->currentPage + 1) <= $this->countPages)?$this->getLink($this->currentPage + 1):'';
+        $links['page2right']=(($this->currentPage + 2) <= $this->countPages)?$this->getLink($this->currentPage + 2):'';
 
-        if ($this->currentPage> 1) {
-            $back = $this->getLink($this->currentPage - 1);
-        }
-
-        if ($this->currentPage < $this->countPages) {
-            $forward = $this->getLink($this->currentPage + 1);
-        }
-
-        if ($this->currentPage > 3) {
-            $startPage = $this->getLink(1);
-        }
-
-        if ($this->currentPage < ($this->countPages - 2)) {
-            $endPage = $this->getLink($this->countPages);
-        }
-
-        if (($this->currentPage - 2) > 0) {
-            $page2left = $this->getLink($this->currentPage - 2);
-        }
-
-        if (($this->currentPage - 1) > 0) {
-            $page1left = $this->getLink($this->currentPage - 1);
-        }
-
-        if (($this->currentPage + 1) <= $this->countPages) {
-            $page1right = $this->getLink($this->currentPage + 1);
-        }
-
-        if (($this->currentPage + 2) <= $this->countPages) {
-            $page2right = $this->getLink($this->currentPage + 2);
-        }
-
-//        return compact("currentPage", "back", "forward", "startPage", "endPage",
-//            "page2left", "page1left", "page2right", "page1right");
-        return [
-            'currentPage' => $this->currentPage,
-            'back' => $back,
-            'forward' => $forward,
-            'startPage' => $startPage,
-            'endPage' => $endPage,
-            'page2left' => $page2left,
-            'page1left' => $page1left,
-            'page2right' => $page2right,
-            'page1right' => $page1right,
-        ];
+        return $links;
     }
 
     /**
@@ -97,40 +50,6 @@ class Pagination
         if ($page == 1) return $this->uri;
 
         return $this->uri . (str_contains($this->uri, '?') ? "&page=$page" : "?page=$page");
-    }
-
-    /**
-     * The function calculates the total number of pages for pagination
-     * @return int
-     */
-    protected function getCountPages(): int
-    {
-        return ($this->totalRecords == 0) ? 1 : ceil($this->totalRecords / $this->perPage);
-    }
-
-    /**
-     * The function gets the number of the current page
-     * @throws Exception
-     */
-    protected function getCurrentPage(): int
-    {
-        $numberPage = isset($_GET["page"]) ? htmlspecialchars(strip_tags($_GET["page"])) : 1;
-
-        if ($numberPage < 1 || $numberPage > $this->countPages) {
-
-            throw new Exception(StatusCode::Page_Not_Found->name, StatusCode::Page_Not_Found->value);
-        }
-
-        return $numberPage;
-    }
-
-    /**
-     * The function gets the offset position for the future sql query
-     * @return int
-     */
-    public function getOffset(): int
-    {
-        return ($this->currentPage - 1) * $this->perPage;
     }
 
     /**
