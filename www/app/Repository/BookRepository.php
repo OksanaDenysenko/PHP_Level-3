@@ -14,12 +14,12 @@ class BookRepository extends Repository
 
     /**
      * The function creates and returns a Paginator object for pagination
-     * of the results of a SQL query that retrieves information about books and their authors
+     * of the results of a SQL query that retrieves information about titles of books and their authors
      * @param int $limit - is the number of records to retrieve
      * @return Paginator
      * @throws \Exception
      */
-    public function getBooksWithAuthors(int $limit): Paginator
+    public function getTitlesOfBooksWithAuthors(int $limit): Paginator
     {
         if ($limit <= 0) {
 
@@ -27,6 +27,28 @@ class BookRepository extends Repository
         }
 
         $sql = "SELECT b.id, b.title, 
+              GROUP_CONCAT(a.full_name SEPARATOR ', ') AS authors
+              FROM books b
+              INNER JOIN book_author ba ON b.id = ba.book_id
+              INNER JOIN authors a ON ba.author_id = a.id
+              GROUP BY b.id";
+
+        $totalRecords=$this->getTotalBooksWithAuthors();
+
+        return new Paginator(Database::getConnection(), $sql, $limit, $totalRecords);
+    }
+
+    /**
+     * The function creates and returns a Paginator object for pagination
+     * of the results of a SQL query that retrieves information about titles and years of books and their authors
+     * @param int $limit - is the number of records to retrieve
+     * @return Paginator
+     * @throws \Exception
+     */
+    public function getTitlesAndYearsOfBooksWithAuthors(int $limit): Paginator
+    {
+
+        $sql = "SELECT b.id, b.title, b.year, 
               GROUP_CONCAT(a.full_name SEPARATOR ', ') AS authors
               FROM books b
               INNER JOIN book_author ba ON b.id = ba.book_id

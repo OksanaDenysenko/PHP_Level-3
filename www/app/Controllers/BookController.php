@@ -13,4 +13,12 @@ class BookController extends Controller
 
        require DEFAULT_TEMPLATE;
     }
+//
+//    public function increaseClicks($id) {
+//        $book = new BookRepository();
+//        $clicks = $book->increaseClicks($id);
+//
+//        header('Content-Type: application/json');
+//        echo json_encode(['clicks' => $clicks]);
+//    }
 }

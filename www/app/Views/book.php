@@ -38,7 +38,7 @@
                         </div>
                     </div>
                     <div class="btnBlock col-xs-12 col-sm-12 col-md-12">
-                        <button type="button" class="btnBookID btn-lg btn btn-success">Хочу читать!</button>
+                        <button type="button" class="btnBookID btn-lg btn btn-success" data-book-id="<?= $data['id'] ?>">Хочу читать!</button>
                     </div>
                     <div class="bookDescription col-xs-12 col-sm-12 col-md-12 hidden-xs hidden-sm">
                         <h4>О книге</h4>

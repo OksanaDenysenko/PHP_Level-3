@@ -17,3 +17,4 @@ const IMAGES_DIR = __DIR__.'/../../public/assets/images';
 //view
 const VIEWS_DIR=__DIR__.'/../../app/Views';
 const DEFAULT_TEMPLATE= VIEWS_DIR.'/default.php';
+const DEFAULT_TEMPLATE_ADMIN= VIEWS_DIR.'/admin/default_admin.php';
