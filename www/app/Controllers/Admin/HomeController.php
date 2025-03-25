@@ -12,8 +12,7 @@ class HomeController extends Controller
      */
     function index(): void
     {
-        $limit = 4; //number of entries per page
-        $paginator=(new BookRepository())->getTitlesAndYearsOfBooksWithAuthors($limit);
+        $paginator=(new BookRepository())->getTitlesAndYearsOfBooksWithAuthors();
         $this->view('Admin/home',
             ["books"=>$paginator->getItems(),"pagination"=>$paginator->getPaginationData()]);
         require DEFAULT_TEMPLATE_ADMIN;

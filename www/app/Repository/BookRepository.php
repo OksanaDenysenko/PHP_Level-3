@@ -19,7 +19,7 @@ class BookRepository extends Repository
      * @return Paginator
      * @throws \Exception
      */
-    public function getTitlesOfBooksWithAuthors(int $limit): Paginator
+    public function getTitlesOfBooksWithAuthors(int $limit=20): Paginator
     {
         if ($limit <= 0) {
 
@@ -45,7 +45,7 @@ class BookRepository extends Repository
      * @return Paginator
      * @throws \Exception
      */
-    public function getTitlesAndYearsOfBooksWithAuthors(int $limit): Paginator
+    public function getTitlesAndYearsOfBooksWithAuthors(int $limit=4): Paginator
     {
 
         $sql = "SELECT b.id, b.title, b.year, 
