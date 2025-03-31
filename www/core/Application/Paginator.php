@@ -2,42 +2,33 @@
 
 namespace Core\Application;
 
+use Core\Data\QueryBuilder;
 use Exception;
 use PDO;
 
 class Paginator
 {
-    private string $sql;
+    private QueryBuilder $queryBuilder;
     private PDO $pdo;
-    protected int $currentPage;
-    protected int $perPage;
-    protected int $totalRecords;
-    protected int $countPages;
+    private int $limit;
+    private int $currentPage;
+
+    public array $data = [];
+
+    public array $pagination = [];
 
     /**
      * @throws Exception
      */
-    public function __construct(PDO $pdo, string $sql, int $limit, int $totalRecords)
+    public function __construct(PDO $pdo, QueryBuilder $queryBuilder, int $limit = 20)
     {
         $this->pdo = $pdo;
-        $this->sql = $sql;
-        $this->perPage = $limit;
-        //$this->totalRecords = $this->getTotalRecords();
-        $this->totalRecords = $totalRecords;
-        $this->countPages = $this->getCountPages();
+        $this->queryBuilder = $queryBuilder;
+        $this->limit = $limit;
         $this->currentPage = $this->getCurrentPage();
+        $this->data = $this->getItems();
+        $this->pagination = $this->getPaginationData();
     }
-
-//    /**
-//     * The function gets the total number of records that match the SQL query
-//     * @return int
-//     */
-//    public function getTotalRecords(): int
-//    {
-//
-//        return $this->pdo->query(
-//            "SELECT COUNT(*)FROM ($this->sql) AS count")->fetchColumn();
-//    }
 
     /**
      * The function gets the number of the current page
@@ -47,42 +38,25 @@ class Paginator
     {
         $numberPage = isset($_GET["page"]) ? htmlspecialchars(strip_tags($_GET["page"])) : 1;
 
-        if ($numberPage < 1 || $numberPage > $this->countPages) {
+        if ($numberPage < 1) {
 
-            throw new Exception(StatusCode::Page_Not_Found->name, StatusCode::Page_Not_Found->value);
+            throw new Exception(StatusCode::Bad_Request->name, StatusCode::Bad_Request->value);
         }
 
         return $numberPage;
     }
 
     /**
-     * The function calculates the total number of pages for pagination
-     * @return int
-     */
-    protected function getCountPages(): int
-    {
-        return ($this->totalRecords == 0) ? 1 : ceil($this->totalRecords / $this->perPage);
-    }
-
-    /**
-     * The function gets the offset position for the future sql query
-     * @return int
-     */
-    public function getOffset(): int
-    {
-        return ($this->currentPage - 1) * $this->perPage;
-    }
-
-    /**
      *The function gets the data that executes the current query,
      * taking into account the limit and offset.
-     * @return array
+     * @return array|false
      */
-    public function getItems(): array
+    protected function getItems(): array|false
     {
-        $sql = $this->sql . " LIMIT :limit OFFSET :offset";
+        $sql = str_replace('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $this->queryBuilder->getQuery()); // for totalRecords
+        $sql .= " LIMIT :limit OFFSET :offset";
         $stm = $this->pdo->prepare($sql);
-        $stm->bindParam(':limit', $this->perPage, PDO::PARAM_INT);
+        $stm->bindParam(':limit', $this->limit, PDO::PARAM_INT);
         $offset = $this->getOffset();
         $stm->bindParam(':offset', $offset, PDO::PARAM_INT);
         $stm->execute();
@@ -91,12 +65,40 @@ class Paginator
     }
 
     /**
+     * The function gets the offset position for the future sql query
+     * @return int
+     */
+    protected function getOffset(): int
+    {
+        return ($this->currentPage - 1) * $this->limit;
+    }
+
+    /**
      * The function receives data from the Pagination class
      * @throws \Exception
      */
-    public function getPaginationData(): array
+    protected function getPaginationData(): array
     {
-        $pagination = new Pagination($this->countPages, $this->currentPage);
+        $countPages = $this->getCountPages();
+
+        if ($this->currentPage > $countPages) {
+
+            throw new Exception(StatusCode::Bad_Request->name, StatusCode::Bad_Request->value);
+        }
+
+        $pagination = new Pagination($countPages, $this->currentPage);
+
         return $pagination->getPaginationData();
+    }
+
+    /**
+     * The function calculates the total number of pages for pagination
+     * @return int
+     */
+    protected function getCountPages(): int
+    {
+        $totalRecords = $this->pdo->query("SELECT FOUND_ROWS()")->fetchColumn();
+
+        return ($totalRecords == 0) ? 1 : ceil($totalRecords / $this->limit);
     }
 }

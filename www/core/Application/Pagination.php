@@ -8,7 +8,7 @@ class Pagination
 {
     protected int $countPages;
     protected int $currentPage;
-    protected string $uri;
+    protected array $url;
 
     /**
      * @throws Exception
@@ -17,7 +17,7 @@ class Pagination
     {
         $this->countPages = $countPages;
         $this->currentPage = $currentPage;
-        $this->uri = $this->getUri();
+        $this->url = $this->getUrl();
     }
 
     /**
@@ -26,18 +26,14 @@ class Pagination
      */
     public function getPaginationData(): array
     {
-        $links = [];
-        $links['currentPage'] = $this->currentPage;
-        $links['back']=($this->currentPage > 1)?$this->getLink($this->currentPage - 1):'';
-        $links['forward'] =($this->currentPage < $this->countPages)?$this->getLink($this->currentPage + 1):'';
-        $links['startPage'] =($this->currentPage > 3)?$this->getLink(1):'';
-        $links['endPage']=($this->currentPage < ($this->countPages - 2))?$this->getLink($this->countPages):'';
-        $links['page2left']=(($this->currentPage - 2) > 0)?$this->getLink($this->currentPage - 2):'';
-        $links['page1left']=(($this->currentPage - 1) > 0)?$this->getLink($this->currentPage - 1):'';
-        $links['page1right']=(($this->currentPage + 1) <= $this->countPages)?$this->getLink($this->currentPage + 1):'';
-        $links['page2right']=(($this->currentPage + 2) <= $this->countPages)?$this->getLink($this->currentPage + 2):'';
-
-        return $links;
+        return [
+            'currentPage' => $this->currentPage,
+            'totalPages' => $this->countPages,
+            'previousPage' => ($this->currentPage > 1) ? $this->getLink($this->currentPage - 1) : '',
+            'nextPage' => ($this->currentPage < $this->countPages) ? $this->getLink($this->currentPage + 1) : '',
+            'startPage' => ($this->currentPage > 2) ? $this->getLink(1) : '',
+            'lastPage' => ($this->currentPage < ($this->countPages - 1)) ? $this->getLink($this->countPages) : '',
+        ];
     }
 
     /**
@@ -47,32 +43,21 @@ class Pagination
      */
     protected function getLink(int $page): string
     {
-        if ($page == 1) return $this->uri;
+        if (!empty($this->url["query"])) {
+            parse_str($this->url["query"], $params);
 
-        return $this->uri . (str_contains($this->uri, '?') ? "&page=$page" : "?page=$page");
+            return buildUrl($this->url["path"], [...$params, 'page' => $page]);
+        }
+
+        return buildUrl($this->url["path"], ['page' => $page]);
     }
 
     /**
-     * The function retrieves the URI without the page pagination parameter
-     * @return string
+     * The function returns the request URL as an associative array
+     * @return array
      */
-    protected function getUri(): string
+    function getUrl(): array
     {
-        $url = parse_url(strip_tags($_SERVER['REQUEST_URI']));
-        $uri = $url["path"];
-
-        if (!empty($url["query"])) {
-            parse_str($url["query"], $params);
-
-            if (isset($params["page"])) {
-                unset($params["page"]);
-            }
-
-            if (!empty($params)) {
-                $uri = $url["path"] . '?' . http_build_query($params);
-            }
-        }
-
-        return $uri;
+        return parse_url(strip_tags($_SERVER['REQUEST_URI']));
     }
 }
