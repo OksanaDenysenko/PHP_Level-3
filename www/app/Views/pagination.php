@@ -1,64 +1,56 @@
 <nav aria-label="Page navigation example">
     <ul class="pagination">
         <?php
+        $current = $data["pagination"]["currentPage"];
+        $total = $data["pagination"]["totalPages"];
+        $start = $data["pagination"]["startPage"];
+        $previous = $data["pagination"]["previousPage"];
+        $next = $data["pagination"]["nextPage"];
+        $last = $data["pagination"]["lastPage"];
 
-        if (!empty($data["pagination"]["startPage"])) {
-            $link = $data["pagination"]["startPage"];
+        if (!empty($start)) {
+            $link = $start;
             $ariaLabel = "Start page";
-            $label = "<<";
+            $label = "1";
             require 'pagination_item.php';
         }
 
-        if (!empty($data["pagination"]["back"])) {
-            $link=$data["pagination"]["back"];
+        if (isset($previous) && ($current - 2) > 1) {
+            ?>
+            <li class="page-item disabled"><a class="page-link">...</a></li>
+            <?php
+        }
+
+        if (!empty($previous)) {
+            $link=$previous;
             $ariaLabel = "Previous page";
-            $label = "<";
+            $label = $current - 1;
             require 'pagination_item.php';
         }
 
-        if (!empty($data["pagination"]["page2left"])) {
-            $link = $data["pagination"]["page2left"];
-            $ariaLabel = "";
-            $label = $data["pagination"]["currentPage"] - 2;
-            require 'pagination_item.php';
-        }
-
-        if (!empty($data["pagination"]["page1left"])) {
-            $link = $data["pagination"]["page1left"];
-            $ariaLabel = "";
-            $label = $data["pagination"]["currentPage"] - 1;
-            require 'pagination_item.php';
-        }
         ?>
 
-        <li class="page-item active"><a class="page-link"><?= $data["pagination"]['currentPage'] ?></a></li>
+        <li class="page-item active"><a class="page-link"><?= $current ?></a></li>
 
         <?php
-        if (!empty($data["pagination"]["page1right"])) {
-            $link = $data["pagination"]["page1right"];
-            $ariaLabel = "";
-            $label = $data["pagination"]["currentPage"] + 1;
-            require 'pagination_item.php';
-        }
 
-        if (!empty($data["pagination"]["page2right"])) {
-            $link = $data["pagination"]["page2right"];
-            $ariaLabel = "";
-            $label = $data["pagination"]["currentPage"] + 2;
-            require 'pagination_item.php';
-        }
-
-        if (!empty($data["pagination"]["forward"])) {
-            $link = $data["pagination"]["forward"];
+        if (!empty($next)) {
+            $link = $next;
             $ariaLabel = "Next page";
-            $label = ">";
+            $label = $current + 1;
             require 'pagination_item.php';
         }
 
-        if (!empty($data["pagination"]["endPage"])) {
-            $link = $data["pagination"]["endPage"];
-            $ariaLabel = "End page";
-            $label = ">>";
+        if (isset($next) && ($current + 2) < $total) {
+            ?>
+            <li class="page-item disabled"><a class="page-link">...</a></li>
+            <?php
+        }
+
+        if (!empty($last)) {
+            $link = $last;
+            $ariaLabel = "Last page";
+            $label = $total;
             require 'pagination_item.php';
         }
         ?>
