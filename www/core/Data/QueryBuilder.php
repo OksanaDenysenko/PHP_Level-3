@@ -17,7 +17,7 @@ class QueryBuilder
      * @param $columns - column names
      * @return $this
      */
-    public function select($columns): static
+    public function select(array|string $columns): static
     {
         $this->select = is_array($columns) ? $columns : func_get_args();
 
@@ -29,11 +29,16 @@ class QueryBuilder
      * @param $table - table name
      * @return $this
      */
-    public function from($table): static
+    public function from(string $table): static
     {
         $this->from = $table;
 
         return $this;
+    }
+
+    public function getFrom():string
+    {
+        return $this->from;
     }
 
     /**
@@ -100,7 +105,7 @@ class QueryBuilder
         if (!empty($this->joins)) {
 
             foreach ($this->joins as $join) {
-                $sql .= ' ' . $join['type'] . ' JOIN ' . $join['table'] . ' ON ' . $join['on'];
+                $sql .= ' ' . $join['type'] . ' JOIN ' . $join['table'] . ' ON (' . $join['on'].')';
             }
         }
 

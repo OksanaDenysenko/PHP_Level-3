@@ -15,14 +15,10 @@
             require 'pagination_item.php';
         }
 
-        if (isset($previous) && ($current - 2) > 1) {
-            ?>
-            <li class="page-item disabled"><a class="page-link">...</a></li>
-            <?php
-        }
-
         if (!empty($previous)) {
-            $link=$previous;
+            (($current - 2) > 1) ? print ('<li class="page-item disabled"><a class="page-link">...</a></li>'):'';
+
+            $link = $previous;
             $ariaLabel = "Previous page";
             $label = $current - 1;
             require 'pagination_item.php';
@@ -39,12 +35,8 @@
             $ariaLabel = "Next page";
             $label = $current + 1;
             require 'pagination_item.php';
-        }
 
-        if (isset($next) && ($current + 2) < $total) {
-            ?>
-            <li class="page-item disabled"><a class="page-link">...</a></li>
-            <?php
+            (($current + 2) < $total)? print '<li class="page-item disabled"><a class="page-link">...</a></li>':'';
         }
 
         if (!empty($last)) {
