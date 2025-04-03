@@ -2,6 +2,7 @@
 
 namespace Core\Application;
 
+use Core\Data\Database;
 use Core\Data\QueryBuilder;
 use Exception;
 use PDO;
@@ -20,9 +21,9 @@ class Paginator
     /**
      * @throws Exception
      */
-    public function __construct(PDO $pdo, QueryBuilder $queryBuilder, int $limit = 20)
+    public function __construct(QueryBuilder $queryBuilder, int $limit = 20)
     {
-        $this->pdo = $pdo;
+        $this->pdo = Database::getConnection();
         $this->queryBuilder = $queryBuilder;
         $this->limit = $limit;
         $this->currentPage = $this->getCurrentPage();

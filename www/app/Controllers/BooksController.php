@@ -14,7 +14,7 @@ class BooksController extends Controller
      */
     function index(): void
     {
-        $paginator = new Paginator(Database::getConnection(), (new BookRepository())->getBooksWithAuthors());
+        $paginator = new Paginator((new BookRepository())->getBooksWithAuthors());
         $this->view('books',
             ["books" => $paginator->data, "pagination" => $paginator->pagination]);
 

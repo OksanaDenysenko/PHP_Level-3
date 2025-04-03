@@ -14,7 +14,7 @@ class HomeController extends Controller
      */
     function index(): void
     {
-        $paginator = new Paginator(Database::getConnection(), (new BookRepository())->getBooksWithAuthorsAndNumberOfClicks(),4);
+        $paginator = new Paginator((new BookRepository())->getBooksWithAuthorsAndNumberOfClicks(),4);
         $this->view('Admin/home',
             ["books" => $paginator->data, "pagination" => $paginator->pagination]);
 
