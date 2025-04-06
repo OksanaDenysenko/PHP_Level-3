@@ -80,7 +80,7 @@ $('.btnBookID').click(function(event) {
     const bookId = $(this).data('bookId'); // Отримуємо ID книги з атрибута data-book-id
 
     $.ajax({
-        url: '/books/clicks/' + bookId, // Замініть на ваш URL API
+        url: '/book/' + bookId, // Замініть на ваш URL API
         method: 'POST',
         success: function(response) {
             // Успішний запит

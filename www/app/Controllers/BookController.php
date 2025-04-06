@@ -13,12 +13,16 @@ class BookController extends Controller
 
        require DEFAULT_TEMPLATE;
     }
-//
-//    public function increaseClicks($id) {
+
+    public function increaseClicks($id) {
+        show($id);
+        // Отримання ID книги
+        $bookId = $_POST['id'] ?? null;
+        //збільшити кліки в базі даних
 //        $book = new BookRepository();
 //        $clicks = $book->increaseClicks($id);
 //
 //        header('Content-Type: application/json');
 //        echo json_encode(['clicks' => $clicks]);
-//    }
+    }
 }
