@@ -21,7 +21,7 @@ class BookRepository extends Repository
 
         return $queryBuilder->select(['b.id', 'b.title',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors']);
-       }
+    }
 
         /**
          * The function is used to build an SQL query that selects information
@@ -32,23 +32,9 @@ class BookRepository extends Repository
     {
         $queryBuilder = $this->getBaseBooksQueryBuilder();
 
-        return $queryBuilder->select('b.id', 'b.title', 'b.year',
-            'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors');
+        return $queryBuilder->select(['b.id', 'b.title', 'b.year',
+            'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors']);
     }
-
-//    /**
-//     * The function counts the total number of unique books that have authors
-//     * @return int
-//     */
-//    public function getTotalBooksWithAuthors(): int
-//    {
-//        $sql = "SELECT COUNT(DISTINCT b.id)
-//                FROM books b
-//                INNER JOIN book_author ba ON b.id = ba.book_id
-//                INNER JOIN authors a ON ba.author_id = a.id";
-//
-//        return Database::getConnection()->query($sql)->fetchColumn();
-//    }
 
     /**
      * The function retrieves detailed information about a specific book along with its authors by its ID

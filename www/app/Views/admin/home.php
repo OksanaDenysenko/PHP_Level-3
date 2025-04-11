@@ -12,7 +12,7 @@
         </thead>
         <tbody>
         <?php
-        foreach ($data["books"] as $book) :?>
+        foreach ($data["items"] as $book) :?>
             <tr>
                 <td>
                     <?php if (isset($book['id'])) : ?>

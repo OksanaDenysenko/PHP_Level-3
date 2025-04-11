@@ -15,8 +15,7 @@ class HomeController extends Controller
     function index(): void
     {
         $paginator = new Paginator((new BookRepository())->getBooksWithAuthorsAndNumberOfClicks(),4);
-        $this->view('Admin/home',
-            ["books" => $paginator->data, "pagination" => $paginator->pagination]);
+        $this->view('Admin/home', $paginator->getPaginationData());
 
         require DEFAULT_TEMPLATE_ADMIN;
     }
