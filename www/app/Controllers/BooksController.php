@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Repository\BookRepository;
 use Core\Application\Controller;
 use Core\Application\Paginator;
-use Core\Data\Database;
 
 class BooksController extends Controller
 {
@@ -14,9 +13,8 @@ class BooksController extends Controller
      */
     function index(): void
     {
-        $paginator = new Paginator((new BookRepository())->getBooksWithAuthors(),2);
-        $this->view('books',
-            ["books" => $paginator->data, "pagination" => $paginator->pagination]);
+        $paginator = new Paginator((new BookRepository())->getBooksWithAuthors(),20);
+        $this->view('books', $paginator->getPaginationData());
 
         require DEFAULT_TEMPLATE;
     }

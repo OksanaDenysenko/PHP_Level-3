@@ -12,11 +12,7 @@ function show($stuff): void // for convenient data output
  * @param array $params
  * @return mixed|string
  */
-function buildUrl($uri, array $params=[]): mixed
+function buildUrl($uri, array $params = []): mixed
 {
-    if (!empty($params)) {
-        return $uri . '?' . http_build_query($params);
-    }
-
-    return $uri;
+    return !empty($params) ? $uri . '?' . http_build_query($params) : $uri;
 }

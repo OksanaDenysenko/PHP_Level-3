@@ -14,14 +14,13 @@ class BookRepository extends Repository
      * The function creates and returns a Paginator object for pagination
      * of the results of a SQL query that retrieves information about books and their authors
      * @return QueryBuilder
-     * @throws \Exception
      */
     public function getBooksWithAuthors(): QueryBuilder
     {
         $queryBuilder = $this->getBaseBooksQueryBuilder();
 
-        return $queryBuilder->select('b.id', 'b.title',
-            'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors');
+        return $queryBuilder->select(['b.id', 'b.title',
+            'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors']);
     }
 
     /**
@@ -32,11 +31,12 @@ class BookRepository extends Repository
     public function getBookWithAuthors(int $id): mixed
     {
         $queryBuilder = $this->getBaseBooksQueryBuilder();
-        $queryBuilder->select('b.id', 'b.title', 'b.content', 'b.year', 'b.number_of_pages',
-            'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors')
-            ->where('b.id = :id');
+        $queryBuilder->select(['b.id', 'b.title', 'b.content', 'b.year', 'b.number_of_pages',
+            'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors'])
+            ->where(['b.id = :id'])
+            ->setParams(['id' => $id]);
         $stm = Database::getConnection()->prepare($queryBuilder->getQuery());
-        $stm->execute(['id' => $id]);
+        $stm->execute($queryBuilder->getParams());
 
         return $stm->fetch();
     }
@@ -50,7 +50,7 @@ class BookRepository extends Repository
         return (new QueryBuilder())
             ->from('books b')
             ->join('book_author ba', 'b.id = ba.book_id')
-            ->join('authors a', 'ba.author_id = a.id')
-            ->group('b.id');
+            ->addJoin('authors a', 'ba.author_id = a.id')
+            ->group(['b.id']);
     }
 }
