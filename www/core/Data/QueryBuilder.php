@@ -235,8 +235,8 @@ class QueryBuilder
         if (!empty($this->joins)) {
 
             foreach ($this->joins as $join) {
-                $sql .= ' ' . $join['type'] . ' JOIN ' . $join['table'];
-                $sql .= ($join['on'] != '') ? ' ON (' . $join['on'] . ')' : ''; //CROSS JOIN
+                $sql .= ' ' . $join['type'] . ' JOIN ' . $join['table'].' ON (' . $join['on'] . ')';
+                //$sql .= ($join['on'] != '') ? ' ON (' . $join['on'] . ')' : ''; //CROSS JOIN
             }
         }
 
