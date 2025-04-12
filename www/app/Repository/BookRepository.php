@@ -17,7 +17,7 @@ class BookRepository extends Repository
      */
     public function getBooksWithAuthors(): QueryBuilder
     {
-        $queryBuilder = $this->getBaseBooksQueryBuilder();
+        $queryBuilder = $this->getQueryBuilder();
 
         return $queryBuilder->select(['b.id', 'b.title',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors']);
@@ -30,7 +30,7 @@ class BookRepository extends Repository
      */
     public function getBookWithAuthors(int $id): mixed
     {
-        $queryBuilder = $this->getBaseBooksQueryBuilder();
+        $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->select(['b.id', 'b.title', 'b.content', 'b.year', 'b.number_of_pages',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors'])
             ->where(['b.id = :id'])
@@ -44,13 +44,14 @@ class BookRepository extends Repository
     /**
      * The function creates a basic QueryBuilder with common query parts
      * @return QueryBuilder
+     * @throws \Exception
      */
-    private function getBaseBooksQueryBuilder(): QueryBuilder
+    private function getQueryBuilder(): QueryBuilder
     {
         return (new QueryBuilder())
             ->from('books b')
             ->join('book_author ba', 'b.id = ba.book_id')
-            ->addJoin('authors a', 'ba.author_id = a.id')
+            ->join('authors a', 'ba.author_id = a.id')
             ->group(['b.id']);
     }
 }
