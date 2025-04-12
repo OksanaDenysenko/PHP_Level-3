@@ -66,24 +66,27 @@ class QueryBuilder
      * @param $on - condition for joining
      * @param string $type - join type
      * @return $this
+     * @throws \Exception
      */
-    public function join(string $table = '', string $on = '', string $type = 'INNER'): static
+    public function join(string $table, string $on, string $type = 'INNER'): static
     {
-        $this->joins = ($table != '') ? [compact('table', 'on', 'type')] : [];
+        $types = ['INNER', 'LEFT', 'RIGHT', 'FULL OUTER'];
+        $type = strtoupper($type);
+
+        in_array($type, $types) ?
+            $this->joins[] = compact('table', 'on', 'type') :
+            throw new \Exception("Type $type is not supported by the join function of the QueryBuilder class");
 
         return $this;
     }
 
     /**
-     * The function adds a new JOIN to the joins array
-     * @param $table - name of the table to join
-     * @param $on - condition for joining
-     * @param string $type - join type
+     * The function clears the joins array
      * @return $this
      */
-    public function addJoin(string $table, string $on, string $type = 'INNER'): static
+    public function clearJoins(): static
     {
-        $this->joins[] = compact('table', 'on', 'type');
+        $this->joins = [];
 
         return $this;
     }
@@ -232,8 +235,8 @@ class QueryBuilder
         if (!empty($this->joins)) {
 
             foreach ($this->joins as $join) {
-                $sql .= ' ' . $join['type'] . ' JOIN ' . $join['table'];
-                $sql .= ($join['on'] != '') ? ' ON (' . $join['on'] . ')' : ''; //CROSS JOIN
+                $sql .= ' ' . $join['type'] . ' JOIN ' . $join['table'].' ON (' . $join['on'] . ')';
+                //$sql .= ($join['on'] != '') ? ' ON (' . $join['on'] . ')' : ''; //CROSS JOIN
             }
         }
 
