@@ -27,9 +27,9 @@ html, body {
 .header-wrapper .navbar {
   border-bottom: 5px solid #27ae60;
   background-color: white;
-  margin-bottom: 0; }
+  margin-bottom: 0;}
   .header-wrapper .navbar .navbar-brand {
-    height: 90px; }
+    height: 90px;}
   .header-wrapper .navbar .logo .sh {
     color: black; }
   .header-wrapper .navbar .logo .plus {
@@ -38,7 +38,9 @@ html, body {
     font-family: arial, sans-serif;
     font-size: 60px;
     font-weight: bold;
-    line-height: 60px; }
+    line-height: 60px;
+    vertical-align: middle;
+    display: inline-block;}
   .header-wrapper .navbar .social {
     text-align: right;
     line-height: 90px; }

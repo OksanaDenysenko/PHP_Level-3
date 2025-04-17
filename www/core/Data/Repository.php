@@ -73,4 +73,13 @@ abstract class Repository
     {
         Database::getConnection()->prepare('DELETE FROM ' . static::TABLE_NAME . ' WHERE id = :id')->execute(['id'=>$id]);
     }
+
+    /**
+     * The function receives the number of entries in the table
+     * @return mixed
+     */
+    public function count(): int
+    {
+        return Database::getConnection()->query("SELECT COUNT(*) FROM " . static::TABLE_NAME)->fetchColumn();
+    }
 }
