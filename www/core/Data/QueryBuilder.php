@@ -73,9 +73,11 @@ class QueryBuilder
         $types = ['INNER', 'LEFT', 'RIGHT', 'FULL OUTER'];
         $type = strtoupper($type);
 
-        in_array($type, $types) ?
-            $this->joins[] = compact('table', 'on', 'type') :
+        if (!in_array($type, $types)) {
             throw new \Exception("Type $type is not supported by the join function of the QueryBuilder class");
+        }
+
+        $this->joins[] = compact('table', 'on', 'type');
 
         return $this;
     }
@@ -235,8 +237,7 @@ class QueryBuilder
         if (!empty($this->joins)) {
 
             foreach ($this->joins as $join) {
-                $sql .= ' ' . $join['type'] . ' JOIN ' . $join['table'].' ON (' . $join['on'] . ')';
-                //$sql .= ($join['on'] != '') ? ' ON (' . $join['on'] . ')' : ''; //CROSS JOIN
+                $sql .= ' ' . $join['type'] . ' JOIN ' . $join['table'] . ' ON (' . $join['on'] . ')';
             }
         }
 
