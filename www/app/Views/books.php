@@ -2,7 +2,7 @@
     <div class="container">
         <div id="content" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <?php
-            foreach ($data as $book) {
+            foreach ($data["items"] as $book) {
                 require 'books_one.php';
             }
             ?>
@@ -10,5 +10,8 @@
         </div>
     </div>
 
-    <center>оопс... в этом хтмл не реализованы кнопки "вперед" и "назад", а книг на странице должно быть не больше 20
-    </center>
+    <div class="text-center">
+        <?php
+        require 'pagination.php';
+        ?>
+    </div>

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use Core\Data\Database;
+use Core\Data\QueryBuilder;
 use Core\Data\Repository;
 
 class BookRepository extends Repository
@@ -10,17 +11,16 @@ class BookRepository extends Repository
     protected const TABLE_NAME = 'books';
 
     /**
-     * The function retrieves data about all books along with their authors in one query
-     * @return bool|array
+     * The function creates and returns a Paginator object for pagination
+     * of the results of a SQL query that retrieves information about books and their authors
+     * @return QueryBuilder
      */
-    public function getBooksWithAuthors(): bool|array
+    public function getBooksWithAuthors(): QueryBuilder
     {
-        return Database::getConnection()->query("SELECT b.id, b.title, 
-              GROUP_CONCAT(a.full_name SEPARATOR ', ') AS authors
-              FROM books b
-              INNER JOIN book_author ba ON b.id = ba.book_id
-              INNER JOIN authors a ON ba.author_id = a.id
-              GROUP BY b.id;")->fetchAll();
+        $queryBuilder = $this->getQueryBuilder();
+
+        return $queryBuilder->select(['b.id', 'b.title',
+            'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors']);
     }
 
     /**
@@ -30,11 +30,28 @@ class BookRepository extends Repository
      */
     public function getBookWithAuthors(int $id): mixed
     {
-        return Database::getConnection()->query("SELECT b.id, b.title, b.content, b.year, b.number_of_pages, 
-               GROUP_CONCAT(a.full_name SEPARATOR ', ') AS authors 
-               FROM books b 
-               INNER JOIN book_author ba ON b.id = ba.book_id
-               INNER JOIN authors a ON ba.author_id = a.id
-               WHERE b.id=$id GROUP BY b.id")->fetch();
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder->select(['b.id', 'b.title', 'b.content', 'b.year', 'b.number_of_pages',
+            'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors'])
+            ->where(['b.id = :id'])
+            ->setParams(['id' => $id]);
+        $stm = Database::getConnection()->prepare($queryBuilder->getQuery());
+        $stm->execute($queryBuilder->getParams());
+
+        return $stm->fetch();
+    }
+
+    /**
+     * The function creates a basic QueryBuilder with common query parts
+     * @return QueryBuilder
+     * @throws \Exception
+     */
+    private function getQueryBuilder(): QueryBuilder
+    {
+        return (new QueryBuilder())
+            ->from('books b')
+            ->join('book_author ba', 'b.id = ba.book_id')
+            ->join('authors a', 'ba.author_id = a.id')
+            ->group(['b.id']);
     }
 }
