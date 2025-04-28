@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Repository\BookRepository;
+use App\Repository\ClickRepository;
 use Core\Application\Controller;
 
 class BookController extends Controller
@@ -18,32 +19,24 @@ class BookController extends Controller
     }
 
     /**
-     * @param int $id
+     * The function handles an AJAX request to increment the click counter for a specific book
+     * @param int $id - book id
      * @return void
      */
     public function increaseClicks(int $id): void
     {
-        if ($this->isAjax()) {
-            $success = (new BookRepository())->increaseClicks($id);
-            header('Content-Type: application/json');
-            echo json_encode(['status' => $success ? 'success' : 'error']);
-        } else {
-            // Якщо це не AJAX-запит, можна перенаправити користувача або показати помилку
-            header('HTTP/1.1 400 Bad Request');
-            echo json_encode(['error' => 'Invalid request']);
-        }
+        $this->ensureAjax();
+        $this->responseToAjax((new ClickRepository())->increaseClicks($id));
     }
 
-    public function increaseViews(int $id)
+    /**
+     * The function handles an AJAX request to increment the view count for a specific book
+     * @param int $id - book id
+     * @return void
+     */
+    public function increaseViews(int $id): void
     {
-        if ($this->isAjax()) {
-            $success = (new BookRepository())->increaseViews($id);
-            header('Content-Type: application/json');
-            echo json_encode(['status' => $success ? 'success' : 'error']);
-        } else {
-            // Якщо це не AJAX-запит, можна перенаправити користувача або показати помилку
-            header('HTTP/1.1 400 Bad Request');
-            echo json_encode(['error' => 'Invalid request']);
-        }
+        $this->ensureAjax();
+        $this->responseToAjax((new ClickRepository())->increaseViews($id));
     }
 }

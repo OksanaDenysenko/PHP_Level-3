@@ -3,6 +3,68 @@ var bookIdPosition = pathname.lastIndexOf('/') + 1;
 var isBookInUse = false;
 var bookId;
 
+/*--------------- AJAX request to view pages (when loading DOM) ---------------------*/
+$(document).ready(function () {
+    const bookIdOnPage = $('#id').data('bookId');
+
+    if (bookIdOnPage) {
+        $.ajax({
+            url: '/book/views/' + bookIdOnPage,
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    console.log('Кількість переглядів збільшено');
+                } else {
+                    console.error('Помилка видалення: '+response.message);
+                }
+            },
+            error: function (error) {
+                console.error('Помилка AJAX (перегляд):', error);
+            }
+        });
+    } else {
+        console.warn('ID книги не знайдено на сторінці для обліку переглядів.');
+    }
+
+    /*--------------- AJAX request on button click ---------------------*/
+    $('.btnBookID').click(function (event) {
+        event.preventDefault();
+
+        const bookId = $(this).data('bookId');
+
+        $.ajax({
+            url: '/book/clicks/' + bookId,
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    console.log('Кількість кліків збільшено');
+                } else {
+                    console.error('Помилка видалення: '+response.message);
+                }
+            },
+            error: function (error) {
+                console.error('Помилка AJAX (клік):', error);
+            },
+            complete: function () {
+                alert(
+                    "Книга свободна и ты можешь прийти за ней." +
+                    " Наш адрес: г. Кропивницкий, переулок Васильевский 10, 5 этаж." +
+                    " Лучше предварительно прозвонить и предупредить нас, чтоб " +
+                    " не попасть в неловкую ситуацию. Тел. 099 196 24 69"
+                );
+            }
+        });
+    });
+});
+
 // doAjaxQuery('GET', '/api/v1/books/' + pathname.substr(bookIdPosition), null, function(res) {
 //     view.fillBookInfo(res.data);
 //     if (res.data.event) {
@@ -76,28 +138,3 @@ var bookId;
 //         );
 //     }
 // });
-$('.btnBookID').click(function(event) {
-    const bookId = $(this).data('bookId'); // Отримуємо ID книги з атрибута data-book-id
-
-    $.ajax({
-        url: '/book/' + bookId, // Замініть на ваш URL API
-        method: 'POST',
-        success: function(response) {
-            // Успішний запит
-            console.log('Кількість кліків збільшено');
-        },
-        error: function(error) {
-            // Помилка запиту
-            console.error('Помилка AJAX:', error);
-        },
-        complete: function() {
-            // Виконується завжди, незалежно від результату запиту
-            alert(
-                "Книга свободна и ты можешь прийти за ней." +
-                " Наш адрес: г. Кропивницкий, переулок Васильевский 10, 5 этаж." +
-                " Лучше предварительно прозвонить и предупредить нас, чтоб " +
-                " не попасть в неловкую ситуацию. Тел. 099 196 24 69"
-            );
-        }
-    });
-});

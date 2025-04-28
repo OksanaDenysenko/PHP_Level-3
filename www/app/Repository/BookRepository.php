@@ -3,7 +3,8 @@
 namespace App\Repository;
 
 use Core\Data\Database;
-use Core\Data\QueryBuilder;
+use Core\Data\QueryBuilder\InsertQuery;
+use Core\Data\QueryBuilder\SelectQuery;
 use Core\Data\Repository;
 
 class BookRepository extends Repository
@@ -13,12 +14,12 @@ class BookRepository extends Repository
     /**
      * The function creates and returns a Paginator object for pagination
      * of the results of a SQL query that retrieves information about books and their authors
-     * @return QueryBuilder
+     * @return SelectQuery
      * @throws \Exception
      */
-    public function getBooksWithAuthors(): QueryBuilder
+    public function getActiveBooksWithAuthors(): SelectQuery
     {
-        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder = $this->getActiveQueryBuilder();
 
         return $queryBuilder->select(['b.id', 'b.title',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors']);
@@ -27,15 +28,16 @@ class BookRepository extends Repository
     /**
      * The function is used to build an SQL query that selects information
      * about books, their authors, and the number of clicks
-     * @return QueryBuilder
+     * @return SelectQuery
      * @throws \Exception
      */
-        public function getBooksWithAuthorsAndNumberOfClicks(): QueryBuilder
+        public function getActiveBooksWithAuthorsAndClicks(): SelectQuery
     {
-        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder = $this->getActiveQueryBuilder();
 
-        return $queryBuilder->select(['b.id', 'b.title', 'b.year',
-            'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors']);
+        return $queryBuilder->select(['b.id', 'b.title', 'b.year', 'c.view_count', 'c.click_count',
+            'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors'])
+            ->join('clicks c', 'b.id = c.book_id', 'LEFT');
     }
 
     /**
@@ -59,29 +61,28 @@ class BookRepository extends Repository
 
     /**
      * The function creates a basic QueryBuilder with common query parts
-     * @return QueryBuilder
+     * @return SelectQuery
      * @throws \Exception
      */
-    private function getQueryBuilder(): QueryBuilder
+    private function getQueryBuilder(): SelectQuery
     {
-        return (new QueryBuilder())
-            ->from('books b')
+        return (new SelectQuery())
+            ->table(self::TABLE_NAME.' b')
             ->join('book_author ba', 'b.id = ba.book_id')
             ->join('authors a', 'ba.author_id = a.id')
             ->group(['b.id']);
     }
 
-    public function increaseClicks(int $id)
+    /**
+     * The function creates a basic QueryBuilder with common query parts
+     * for books that are not marked as deleted
+     * @return SelectQuery
+     * @throws \Exception
+     */
+    private function getActiveQueryBuilder(): SelectQuery
     {
-        $stmt = Database::getConnection()->prepare("UPDATE clicks SET click_count = click_count + 1 WHERE book_id = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        return $stmt->execute();
-    }
-
-    public function increaseViews(int $id)
-    {
-        $stmt = Database::getConnection()->prepare("UPDATE clicks SET view_count = view_count + 1 WHERE book_id = :id");
-        $stmt->bindParam(':book_id', $id, PDO::PARAM_INT);
-        return $stmt->execute();
+        return $this->getQueryBuilder()
+            ->join('deleted_books db', 'b.id = db.book_id', 'LEFT')
+            ->where(['db.book_id IS NULL']);
     }
 }

@@ -6,8 +6,8 @@
             <th>Автори</th>
             <th>Рік</th>
             <th>Дія</th>
-            <th>"Хочу читати"</th>
             <th>Перегляди сторінки</th>
+            <th>Хочуть читати</th>
         </tr>
         </thead>
         <tbody>
@@ -23,9 +23,11 @@
                 </td>
                 <td><?= $book['authors'] ?></td>
                 <td><?= $book['year'] ?></td>
-                <td>Видалити</td>
-                <td>5</td>
-                <td>5</td>
+                <td>
+                    <a href="#" class="delete-book" data-book-id="<?= $book['id'] ?>">Видалити</a>
+                </td>
+                <td><?= $book['view_count'] ?></td>
+                <td><?= $book['click_count'] ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
@@ -36,3 +38,5 @@
         ?>
     </div>
 </div>
+
+<script src="/assets/js/admin.js" defer=""></script>

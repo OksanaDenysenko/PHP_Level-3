@@ -16,7 +16,7 @@
                     </div>
                 </div>
             </script>
-            <div id="id" book-id="<?= $data['id'] ?>">
+            <div id="id" data-book-id="<?= $data['id'] ?>">
                 <div id="bookImg" class="col-xs-12 col-sm-3 col-md-3 item" style="
     margin:;
 "><img src="/assets/images/<?= $data['id'] ?>.jpg" alt="Responsive image" class="img-responsive">

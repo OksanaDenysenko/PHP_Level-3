@@ -1,16 +1,16 @@
 <?php
 
-namespace Core\Data;
+namespace Core\Data\QueryBuilder;
 
-class QueryBuilder
+class SelectQuery extends QueryBuilder
 {
     private array $select = [];
-    private string $from = '';
+    //private string $from = '';
     private array $joins = [];
-    private array $where = [];
+    //private array $where = [];
     private array $group = [];
     private array $order = [];
-    private array $params = [];
+    //private array $params = [];
     private ?int $limit = null;
     private ?int $offset = null;
 
@@ -39,26 +39,26 @@ class QueryBuilder
         return $this;
     }
 
-    /**
-     * The function specifies the table from which to select data in the SQL query.
-     * @param $table - table name
-     * @return $this
-     */
-    public function from(string $table): static
-    {
-        $this->from = $table;
-
-        return $this;
-    }
-
-    /**
-     * The function receives the name of the table from which the query is built
-     * @return string
-     */
-    public function getFrom(): string
-    {
-        return $this->from;
-    }
+//    /**
+//     * The function specifies the table from which to select data in the SQL query.
+//     * @param $table - table name
+//     * @return $this
+//     */
+//    public function table(string $table): static
+//    {
+//        $this->from = $table;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * The function receives the name of the table from which the query is built
+//     * @return string
+//     */
+//    public function getTable(): string
+//    {
+//        return $this->from;
+//    }
 
     /**
      * The function specifies the joining of tables in an SQL query
@@ -73,9 +73,11 @@ class QueryBuilder
         $types = ['INNER', 'LEFT', 'RIGHT', 'FULL OUTER'];
         $type = strtoupper($type);
 
-        in_array($type, $types) ?
-            $this->joins[] = compact('table', 'on', 'type') :
+        if (!in_array($type, $types)) {
             throw new \Exception("Type $type is not supported by the join function of the QueryBuilder class");
+        }
+
+        $this->joins[] = compact('table', 'on', 'type');
 
         return $this;
     }
@@ -91,64 +93,64 @@ class QueryBuilder
         return $this;
     }
 
-    /**
-     * The function sets the WHERE conditions for an SQL query
-     * @param array $condition
-     * @return $this
-     */
-    public function where(array $condition = []): static
-    {
-        $this->where = $condition;
+//    /**
+//     * The function sets the WHERE conditions for an SQL query
+//     * @param array $condition
+//     * @return $this
+//     */
+//    public function where(array $condition = []): static
+//    {
+//        $this->where = $condition;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * The function adds a new WHERE condition to the where array
+//     * @param string $condition
+//     * @param string $operator - operator for combining conditions
+//     * @return $this
+//     */
+//    public function addWhere(string $condition, string $operator = 'AND'): static
+//    {
+//        $this->where[] = " $operator $condition";
+//
+//        return $this;
+//    }
 
-        return $this;
-    }
-
-    /**
-     * The function adds a new WHERE condition to the where array
-     * @param string $condition
-     * @param string $operator - operator for combining conditions
-     * @return $this
-     */
-    public function addWhere(string $condition, string $operator = 'AND'): static
-    {
-        $this->where[] = " $operator $condition";
-
-        return $this;
-    }
-
-    /**
-     * The function specifies a set of parameters
-     * @param array $params
-     * @return $this
-     */
-    public function setParams(array $params = []): static
-    {
-        $this->params = $params;
-
-        return $this;
-    }
-
-    /**
-     * The function adds new parameters to an existing set
-     * @param array $params
-     * @return $this
-     */
-    public function addParams(array $params): static
-    {
-        $this->params = array_merge($this->params, $params);;
-
-        return $this;
-    }
-
-    /**
-     * The function returns an associative array of parameters
-     * that were accumulated when building an SQL query using the where() method
-     * @return array
-     */
-    public function getParams(): array
-    {
-        return $this->params;
-    }
+//    /**
+//     * The function specifies a set of parameters
+//     * @param array $params
+//     * @return $this
+//     */
+//    public function setParams(array $params = []): static
+//    {
+//        $this->params = $params;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * The function adds new parameters to an existing set
+//     * @param array $params
+//     * @return $this
+//     */
+//    public function addParams(array $params): static
+//    {
+//        $this->params = array_merge($this->params, $params);;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * The function returns an associative array of parameters
+//     * that were accumulated when building an SQL query using the where() method
+//     * @return array
+//     */
+//    public function getParams(): array
+//    {
+//        return $this->params;
+//    }
 
     /**
      * The function specifies the columns by which to group query results in an SQL query
@@ -225,18 +227,17 @@ class QueryBuilder
     }
 
     /**
-     * The function assembles the SQL query
+     * The function assembles the SELECT query
      * @return string
      */
     public function getQuery(): string
     {
-        $sql = 'SELECT ' . (empty($this->select) ? '*' : implode(', ', $this->select)) . ' FROM ' . $this->from;
+        $sql = 'SELECT ' . (empty($this->select) ? '*' : implode(', ', $this->select)) . ' FROM ' . $this->table;
 
         if (!empty($this->joins)) {
 
             foreach ($this->joins as $join) {
-                $sql .= ' ' . $join['type'] . ' JOIN ' . $join['table'].' ON (' . $join['on'] . ')';
-                //$sql .= ($join['on'] != '') ? ' ON (' . $join['on'] . ')' : ''; //CROSS JOIN
+                $sql .= ' ' . $join['type'] . ' JOIN ' . $join['table'] . ' ON (' . $join['on'] . ')';
             }
         }
 

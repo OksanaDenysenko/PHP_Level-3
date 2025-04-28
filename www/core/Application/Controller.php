@@ -31,8 +31,38 @@ class Controller
         throw new Exception(StatusCode::Page_Not_Found->name, StatusCode::Page_Not_Found->value);
     }
 
-    public function isAjax(): bool
+    /**
+     * The function checks whether the current HTTP request was sent using AJAX technology (XMLHttpRequest)
+     * @return void
+     */
+    protected function ensureAjax(): void
     {
-        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+        if ($_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest') {
+            header("HTTP/1.1 " . StatusCode::Bad_Request->value . " " . StatusCode::Bad_Request->name);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => StatusCode::Bad_Request->name]);
+
+            exit;
+        }
+    }
+
+    /**
+     * The function sends an HTTP response in JSON format to an AJAX request
+     * @param bool $success - the result of the request
+     * @return void
+     */
+    protected function responseToAjax(bool $success): void
+    {
+        header('Content-Type: application/json');
+
+        if (!$success) {
+            header("HTTP/1.1 " . StatusCode::Server_Error->value . " " . StatusCode::Server_Error->name);
+            echo json_encode(['status' => 'failed', 'message' => 'Помилка на сервері']);
+
+            return;
+        }
+
+        header("HTTP/1.1 " . StatusCode::OK->value . " " . StatusCode::OK->name);
+        echo json_encode(['status' => 'success']);
     }
 }
