@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use Core\Data\Database;
+use Core\Data\QueryBuilder\DeleteQuery;
 use Core\Data\QueryBuilder\InsertQuery;
 use Core\Data\QueryBuilder\SelectQuery;
 use Core\Data\Repository;
@@ -31,7 +32,7 @@ class BookRepository extends Repository
      * @return SelectQuery
      * @throws \Exception
      */
-        public function getActiveBooksWithAuthorsAndClicks(): SelectQuery
+    public function getActiveBooksWithAuthorsAndClicks(): SelectQuery
     {
         $queryBuilder = $this->getActiveQueryBuilder();
 
@@ -67,7 +68,7 @@ class BookRepository extends Repository
     private function getQueryBuilder(): SelectQuery
     {
         return (new SelectQuery())
-            ->table(self::TABLE_NAME.' b')
+            ->table(self::TABLE_NAME . ' b')
             ->join('book_author ba', 'b.id = ba.book_id')
             ->join('authors a', 'ba.author_id = a.id')
             ->group(['b.id']);

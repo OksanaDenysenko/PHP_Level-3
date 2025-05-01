@@ -28,6 +28,6 @@ class HomeController extends Controller
     public function deleteBook(int $id): void
     {
         $this->ensureAjax();
-        $this->responseToAjax((new DeletedBookRepository())->softDeleteBook($id));
+        $this->jsonResponse((new DeletedBookRepository())->softDeleteBook($id));
     }
 }

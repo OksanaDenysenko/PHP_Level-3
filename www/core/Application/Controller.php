@@ -47,21 +47,13 @@ class Controller
     }
 
     /**
-     * The function sends an HTTP response in JSON format to an AJAX request
+     * The function sends an HTTP response in JSON format
      * @param bool $success - the result of the request
      * @return void
      */
-    protected function responseToAjax(bool $success): void
+    protected function jsonResponse(bool $success): void
     {
         header('Content-Type: application/json');
-
-        if (!$success) {
-            header("HTTP/1.1 " . StatusCode::Server_Error->value . " " . StatusCode::Server_Error->name);
-            echo json_encode(['status' => 'failed', 'message' => 'Помилка на сервері']);
-
-            return;
-        }
-
         header("HTTP/1.1 " . StatusCode::OK->value . " " . StatusCode::OK->name);
         echo json_encode(['status' => 'success']);
     }

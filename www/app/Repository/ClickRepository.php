@@ -46,7 +46,7 @@ class ClickRepository extends Repository
      */
     private function getQueryBuilder(): InsertQuery
     {
-      return (new InsertQuery())
+        return (new InsertQuery())
             ->table(self::TABLE_NAME)
             ->insert(['book_id', 'view_count', 'click_count'])
             ->values(['book_id', 'view_count', 'click_count']);

@@ -26,7 +26,7 @@ class BookController extends Controller
     public function increaseClicks(int $id): void
     {
         $this->ensureAjax();
-        $this->responseToAjax((new ClickRepository())->increaseClicks($id));
+        $this->jsonResponse((new ClickRepository())->increaseClicks($id));
     }
 
     /**
@@ -37,6 +37,6 @@ class BookController extends Controller
     public function increaseViews(int $id): void
     {
         $this->ensureAjax();
-        $this->responseToAjax((new ClickRepository())->increaseViews($id));
+        $this->jsonResponse((new ClickRepository())->increaseViews($id));
     }
 }
