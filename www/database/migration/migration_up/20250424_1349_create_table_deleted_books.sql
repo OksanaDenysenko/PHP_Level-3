@@ -1,5 +1,0 @@
-CREATE TABLE IF NOT EXISTS deleted_books (
-      book_id INT PRIMARY KEY,
-      deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
-    );

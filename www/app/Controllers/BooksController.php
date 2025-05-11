@@ -14,7 +14,7 @@ class BooksController extends Controller
      */
     function index(): void
     {
-        $paginator = new Paginator((new BookRepository())->getActiveBooksWithAuthors(),20);
+        $paginator = new Paginator((new BookRepository())->getBooksWithAuthors(),20);
         $this->view('books', $paginator->getPaginationData());
 
         require DEFAULT_TEMPLATE;

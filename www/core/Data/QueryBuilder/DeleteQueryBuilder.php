@@ -2,7 +2,7 @@
 
 namespace Core\Data\QueryBuilder;
 
-class DeleteQuery extends QueryBuilder
+class DeleteQueryBuilder extends QueryBuilder
 {
     private array $delete = [];
 
@@ -36,9 +36,11 @@ class DeleteQuery extends QueryBuilder
      */
     function getQuery(): string
     {
-        $sql = 'DELETE ' . (empty($this->delete) ? '' : implode(', ', $this->delete)) . 'FROM ' . $this->table;
-        $sql=$this->addJoinToQuery($sql);
-        (!empty($this->where)) ? $sql .= ' WHERE ' . implode($this->where) : '';
+        $sql = 'DELETE ' . (empty($this->delete) ? '' : implode(', ', $this->delete)) .
+            'FROM ' . $this->table;
+        $sql = $this->addJoinToQuery($sql);
+
+        if (!empty($this->where)) $sql .= ' WHERE ' . implode($this->where);
 
         return $sql;
     }

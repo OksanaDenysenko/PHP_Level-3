@@ -3,10 +3,10 @@
 namespace Core\Data;
 
 
-use Core\Data\QueryBuilder\DeleteQuery;
-use Core\Data\QueryBuilder\InsertQuery;
-use Core\Data\QueryBuilder\SelectQuery;
-use Core\Data\QueryBuilder\UpdateQuery;
+use Core\Data\QueryBuilder\DeleteQueryBuilder;
+use Core\Data\QueryBuilder\InsertQueryBuilder;
+use Core\Data\QueryBuilder\SelectQueryBuilder;
+use Core\Data\QueryBuilder\UpdateQueryBuilder;
 
 abstract class Repository
 {
@@ -19,7 +19,7 @@ abstract class Repository
      */
     public function find(int $id): mixed
     {
-        $sql = (new SelectQuery())
+        $sql = (new SelectQueryBuilder())
             ->table(static::TABLE_NAME)
             ->where(['id = :id'])
             ->setParams(['id' => $id]);
@@ -36,7 +36,7 @@ abstract class Repository
      */
     public function getAll(string $nameColumns = '*'): bool|array
     {
-        $sql = (new SelectQuery())
+        $sql = (new SelectQueryBuilder())
             ->select([$nameColumns])
             ->table(static::TABLE_NAME);
 
@@ -51,7 +51,7 @@ abstract class Repository
     public function insert(array $data): void
     {
         $keys = array_keys($data);
-        $sql = (new InsertQuery())
+        $sql = (new InsertQueryBuilder())
             ->table(static::TABLE_NAME)
             ->insert($keys)
             ->values($keys)
@@ -68,7 +68,7 @@ abstract class Repository
     public function update(int $id, array $data): void
     {
         $keys = array_keys($data);
-        $sql = (new UpdateQuery())
+        $sql = (new UpdateQueryBuilder())
             ->table(static::TABLE_NAME)
             ->update($keys)
             ->where(['id=:id'])
@@ -84,7 +84,7 @@ abstract class Repository
      */
     public function delete(int $id): void
     {
-        $sql=(new DeleteQuery())
+        $sql=(new DeleteQueryBuilder())
             ->table(static::TABLE_NAME)
             ->where(['id=:id'])
             ->setParams(['id' => $id]);

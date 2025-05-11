@@ -2,7 +2,7 @@
 
 namespace Core\Data\QueryBuilder;
 
-class InsertQuery extends QueryBuilder
+class InsertQueryBuilder extends QueryBuilder
 {
     private array $insert = [];
     private array $values = [];
@@ -87,11 +87,11 @@ class InsertQuery extends QueryBuilder
     function getQuery(): string
     {
         $sql = 'INSERT INTO ' . $this->table .
-            (empty($this->insert) ? ' ' :( ' (' . implode(', ', $this->insert) . ') ')) .
+            (empty($this->insert) ? ' ' : (' (' . implode(', ', $this->insert) . ') ')) .
             'VALUES (:' . implode(', :', $this->insert) . ')';
 
-        (!empty($this->duplicateUpdate)) ?
-            $sql .= " ON DUPLICATE KEY UPDATE " . implode(', ', $this->duplicateUpdate) : '';
+        if (!empty($this->duplicateUpdate))
+            $sql .= " ON DUPLICATE KEY UPDATE " . implode(', ', $this->duplicateUpdate);
 
         return $sql;
     }

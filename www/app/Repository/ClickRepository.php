@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use Core\Data\Database;
-use Core\Data\QueryBuilder\InsertQuery;
+use Core\Data\QueryBuilder\UpdateQueryBuilder;
 use Core\Data\Repository;
 
 class ClickRepository extends Repository
@@ -17,12 +17,7 @@ class ClickRepository extends Repository
      */
     public function increaseClicks(int $id): bool
     {
-        $QueryBuilder = $this->getQueryBuilder()
-            ->duplicateUpdate(['click_count = click_count + 1'])
-            ->setParams(['book_id' => $id, 'view_count'=>0, 'click_count'=>1]);
-        $stm=Database::getConnection()->prepare($QueryBuilder->getQuery());
-
-        return $stm->execute($QueryBuilder->getParams());
+        return $this->increaseCounter($id, 'click_count');
     }
 
     /**
@@ -32,23 +27,24 @@ class ClickRepository extends Repository
      */
     public function increaseViews(int $id): bool
     {
-        $QueryBuilder = $this->getQueryBuilder()
-            ->duplicateUpdate(['view_count = view_count + 1'])
-            ->setParams(['book_id' => $id, 'view_count'=>1, 'click_count'=>0]);
-        $stm=Database::getConnection()->prepare($QueryBuilder->getQuery());
-
-        return $stm->execute($QueryBuilder->getParams());
+        return $this->increaseCounter($id, 'view_count');
     }
 
     /**
-     * The function creates a basic QueryBuilder with common query parts
-     * @return InsertQuery
+     * The function increases the specified counter for a book
+     * @param int $id - book id
+     * @param string $column - column name
+     * @return bool
      */
-    private function getQueryBuilder(): InsertQuery
+    private function increaseCounter(int $id, string $column): bool
     {
-        return (new InsertQuery())
+        $QueryBuilder = (new UpdateQueryBuilder())
             ->table(self::TABLE_NAME)
-            ->insert(['book_id', 'view_count', 'click_count'])
-            ->values(['book_id', 'view_count', 'click_count']);
+            ->where(['book_id = :book_id'])
+            ->setParams(['book_id' => $id])
+            ->update([$column . ' = ' . $column . ' + 1']);
+
+        $stm = Database::getConnection()->prepare($QueryBuilder->getQuery());
+        return $stm->execute($QueryBuilder->getParams());
     }
 }

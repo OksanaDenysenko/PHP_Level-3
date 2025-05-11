@@ -2,7 +2,7 @@
 
 namespace Core\Data\QueryBuilder;
 
-class UpdateQuery extends QueryBuilder
+class UpdateQueryBuilder extends QueryBuilder
 {
     private array $update = [];
 
@@ -36,10 +36,9 @@ class UpdateQuery extends QueryBuilder
      */
     function getQuery(): string
     {
-        $sql = 'UPDATE ' . $this->table . ' SET (' . implode(', ', $this->update) . ')';
+        $sql = 'UPDATE ' . $this->table . ' SET ' . implode(', ', $this->update);
 
-        (!empty($this->where)) ?
-            $sql .= ' WHERE ' . implode($this->where) : '';
+        if (!empty($this->where)) $sql .= ' WHERE ' . implode($this->where);
 
         return $sql;
     }

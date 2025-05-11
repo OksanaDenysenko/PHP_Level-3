@@ -3,9 +3,10 @@
 namespace App\Repository;
 
 use Core\Data\Database;
-use Core\Data\QueryBuilder\DeleteQuery;
-use Core\Data\QueryBuilder\InsertQuery;
-use Core\Data\QueryBuilder\SelectQuery;
+use Core\Data\QueryBuilder\DeleteQueryBuilder;
+use Core\Data\QueryBuilder\InsertQueryBuilder;
+use Core\Data\QueryBuilder\SelectQueryBuilder;
+use Core\Data\QueryBuilder\UpdateQueryBuilder;
 use Core\Data\Repository;
 
 class BookRepository extends Repository
@@ -15,12 +16,12 @@ class BookRepository extends Repository
     /**
      * The function creates and returns a Paginator object for pagination
      * of the results of a SQL query that retrieves information about books and their authors
-     * @return SelectQuery
+     * @return SelectQueryBuilder
      * @throws \Exception
      */
-    public function getActiveBooksWithAuthors(): SelectQuery
+    public function getBooksWithAuthors(): SelectQueryBuilder
     {
-        $queryBuilder = $this->getActiveQueryBuilder();
+        $queryBuilder = $this->getQueryBuilder();
 
         return $queryBuilder->select(['b.id', 'b.title',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors']);
@@ -29,12 +30,12 @@ class BookRepository extends Repository
     /**
      * The function is used to build an SQL query that selects information
      * about books, their authors, and the number of clicks
-     * @return SelectQuery
+     * @return SelectQueryBuilder
      * @throws \Exception
      */
-    public function getActiveBooksWithAuthorsAndClicks(): SelectQuery
+    public function getBooksWithAuthorsAndClicks(): SelectQueryBuilder
     {
-        $queryBuilder = $this->getActiveQueryBuilder();
+        $queryBuilder = $this->getQueryBuilder();
 
         return $queryBuilder->select(['b.id', 'b.title', 'b.year', 'c.view_count', 'c.click_count',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors'])
@@ -49,7 +50,7 @@ class BookRepository extends Repository
      */
     public function getBookWithAuthors(int $id): mixed
     {
-        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder = $this->getQueryBuilderWithDeleted();
         $queryBuilder->select(['b.id', 'b.title', 'b.content', 'b.year', 'b.number_of_pages',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors'])
             ->where(['b.id = :id'])
@@ -62,12 +63,12 @@ class BookRepository extends Repository
 
     /**
      * The function creates a basic QueryBuilder with common query parts
-     * @return SelectQuery
+     * @return SelectQueryBuilder
      * @throws \Exception
      */
-    private function getQueryBuilder(): SelectQuery
+    private function getQueryBuilderWithDeleted(): SelectQueryBuilder
     {
-        return (new SelectQuery())
+        return (new SelectQueryBuilder())
             ->table(self::TABLE_NAME . ' b')
             ->join('book_author ba', 'b.id = ba.book_id')
             ->join('authors a', 'ba.author_id = a.id')
@@ -77,13 +78,29 @@ class BookRepository extends Repository
     /**
      * The function creates a basic QueryBuilder with common query parts
      * for books that are not marked as deleted
-     * @return SelectQuery
+     * @return SelectQueryBuilder
      * @throws \Exception
      */
-    private function getActiveQueryBuilder(): SelectQuery
+    private function getQueryBuilder(): SelectQueryBuilder
     {
-        return $this->getQueryBuilder()
-            ->join('deleted_books db', 'b.id = db.book_id', 'LEFT')
-            ->where(['db.book_id IS NULL']);
+        return $this->getQueryBuilderWithDeleted()
+            ->where(['b.deleted_at IS NULL']);
+    }
+
+    /**
+     * The function performs a "soft" deletion of a book from the database.
+     * @param $id - book id
+     * @return bool
+     */
+    public function softDeleteBook($id): bool
+    {
+        $QueryBuilder = (new UpdateQueryBuilder())
+            ->table(self::TABLE_NAME)
+            ->update(['deleted_at = CURRENT_TIMESTAMP'])
+            ->where(['id =:id'])
+            ->setParams(['id' => $id]);
+        $stm = Database::getConnection()->prepare($QueryBuilder->getQuery());
+
+        return $stm->execute($QueryBuilder->getParams());
     }
 }

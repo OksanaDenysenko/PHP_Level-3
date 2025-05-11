@@ -14,7 +14,7 @@ class HomeController extends Controller
      */
     function index(): void
     {
-        $paginator = new Paginator((new BookRepository())->getActiveBooksWithAuthorsAndClicks(), 4);
+        $paginator = new Paginator((new BookRepository())->getBooksWithAuthorsAndClicks(), 4);
         $this->view('Admin/home', $paginator->getPaginationData());
 
         require DEFAULT_TEMPLATE_ADMIN;
@@ -28,6 +28,6 @@ class HomeController extends Controller
     public function deleteBook(int $id): void
     {
         $this->ensureAjax();
-        $this->jsonResponse((new DeletedBookRepository())->softDeleteBook($id));
+        $this->jsonResponse((new BookRepository())->softDeleteBook($id));
     }
 }

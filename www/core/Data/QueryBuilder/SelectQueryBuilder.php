@@ -2,7 +2,7 @@
 
 namespace Core\Data\QueryBuilder;
 
-class SelectQuery extends QueryBuilder
+class SelectQueryBuilder extends QueryBuilder
 {
     private array $select = [];
     private array $group = [];
@@ -115,13 +115,19 @@ class SelectQuery extends QueryBuilder
      */
     public function getQuery(): string
     {
-        $sql = 'SELECT ' . (empty($this->select) ? '*' : implode(', ', $this->select)) . ' FROM ' . $this->table;
-        $sql=$this->addJoinToQuery($sql);
-        (!empty($this->where)) ? $sql .= ' WHERE ' . implode($this->where) : '';
-        (!empty($this->group)) ? $sql .= ' GROUP BY ' . implode(', ', $this->group) : '';
-        (!empty($this->order)) ? $sql .= ' ORDER BY ' . implode(', ', $this->order) : '';
-        (!empty($this->limit)) ? $sql .= ' LIMIT ' . $this->limit : '';
-        (!empty($this->offset)) ? $sql .= ' OFFSET ' . $this->offset : '';
+        $sql = 'SELECT ' . (empty($this->select) ? '*' : implode(', ', $this->select)) .
+            ' FROM ' . $this->table;
+        $sql = $this->addJoinToQuery($sql);
+
+        if (!empty($this->where)) $sql .= ' WHERE ' . implode($this->where);
+
+        if (!empty($this->group)) $sql .= ' GROUP BY ' . implode(', ', $this->group);
+
+        if (!empty($this->order)) $sql .= ' ORDER BY ' . implode(', ', $this->order);
+
+        if (!empty($this->limit)) $sql .= ' LIMIT ' . $this->limit;
+
+        if (!empty($this->offset)) $sql .= ' OFFSET ' . $this->offset;
 
         return $sql;
     }
