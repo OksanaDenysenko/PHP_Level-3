@@ -27,7 +27,9 @@
         <div style="font-size: 1.5rem; font-weight: bold; color: #154ec8; margin-left: 20px;">Бібліотека ++</div>
         <div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-link btn-lg me-md-2" type="button">Додати книгу</button>
+                <button class="btn btn-link btn-lg me-md-2" type="button" data-bs-toggle="modal" data-bs-target="#addBookModal">
+                    Додати книгу
+                </button>
             </div>
         </div>
     </div>
@@ -35,6 +37,13 @@
     <br>
     <?= $this->content; ?>
 </div>
+<div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+    <?php
+    require 'add_book.php';
+    ?>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

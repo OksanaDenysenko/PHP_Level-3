@@ -75,7 +75,7 @@ class Handler
      * @param $errline - the line in which the error occurred
      * @return void
      */
-    private function logError($errstr, $errfile, $errline): void
+    public static function logError($errstr, $errfile, $errline): void
     {
         error_log("[ " . date('Y-m-d H:i:s') . " ] 
         Error: $errstr, File: $errfile, Line: $errline" . PHP_EOL, 3, ERROR_LOGS);

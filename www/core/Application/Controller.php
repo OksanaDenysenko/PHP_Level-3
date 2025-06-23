@@ -3,6 +3,7 @@
 namespace Core\Application;
 
 use Exception;
+use JetBrains\PhpStorm\NoReturn;
 
 class Controller
 {
@@ -51,10 +52,17 @@ class Controller
      * @param bool $success - the result of the request
      * @return void
      */
-    protected function jsonResponse(bool $success): void
+    #[NoReturn] protected function jsonResponse(bool $success): void
     {
         header('Content-Type: application/json');
         header("HTTP/1.1 " . StatusCode::OK->value . " " . StatusCode::OK->name);
-        echo json_encode(['status' => 'success']);
+
+        if ($success) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'false']);
+        }
+
+        exit;
     }
 }

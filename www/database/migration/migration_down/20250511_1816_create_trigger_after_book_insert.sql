@@ -1,1 +1,1 @@
-DROP TRIGGER IF EXISTS after_book_insert;
+/*DROP TRIGGER IF EXISTS after_book_insert;

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use Core\Data\Database;
+use Core\Data\QueryBuilder\InsertQueryBuilder;
 use Core\Data\QueryBuilder\UpdateQueryBuilder;
 use Core\Data\Repository;
 
@@ -46,5 +47,20 @@ class ClickRepository extends Repository
 
         $stm = Database::getConnection()->prepare($QueryBuilder->getQuery());
         return $stm->execute($QueryBuilder->getParams());
+    }
+
+    /**
+     * The function adds a string for a new book
+     * @param int $bookId
+     * @return void
+     */
+    public function addBook(int $bookId): void
+    {
+        $QueryBuilder = (new InsertQueryBuilder())
+            ->table(self::TABLE_NAME)
+            ->insert(['book_id'])
+            ->setParams(['book_id' => $bookId]);
+        $stm = Database::getConnection()->prepare($QueryBuilder->getQuery());
+        $stm->execute($QueryBuilder->getParams());
     }
 }
