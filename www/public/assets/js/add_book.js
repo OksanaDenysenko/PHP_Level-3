@@ -22,12 +22,22 @@ $(document).ready(function() {
                     alert('Книгу успішно додано!');
                     form[0].reset(); // Очищаємо форму після успішного додавання
                 } else {
-                    alert('Помилка додавання: Можливо книга вже існує. Якщо ні - перевірте правельність заповнення всіх полів.');
+                    alert('Помилка додавання: '+response.message);
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Помилка AJAX:', error);
-                alert('Сталася помилка при додаванні книги. Спробуйте пізніше.');
+                let errorMessage = 'Сталася помилка при додаванні книги. Спробуйте пізніше.';
+
+                if (xhr.status === 400) {
+                    errorMessage = 'Не правельний запит. Перевірте вхідні дані.';
+                } else if (xhr.status === 409) {
+                    errorMessage = 'Книга з такою назвою вже існує.';
+                } else if (xhr.status === 500) {
+                    errorMessage = 'Помилка сервера. Будь ласка, спробуйте пізніше.';
+                }
+
+                console.error('Помилка AJAX:', status, error, xhr.responseText);
+                alert(errorMessage);
             },
             complete: function() {
                 // Ця функція завжди виконується після завершення запиту (успіх або помилка)

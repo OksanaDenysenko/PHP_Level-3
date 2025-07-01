@@ -126,4 +126,21 @@ class BookRepository extends Repository
 
         return Database::getConnection()->lastInsertId();
     }
+
+    /**
+     * The function checks for the existence of a book
+     * @param string $title - book title
+     */
+    public function doesBookExistByTitle(string $title)
+    {
+        $queryBuilder = (new SelectQueryBuilder())
+            ->table(self::TABLE_NAME)
+            ->select(['COUNT(*)'])
+            ->where(['title = :title'])
+            ->setParams(['title' => $title]);
+        $stm = Database::getConnection()->prepare($queryBuilder->getQuery());
+        $stm->execute($queryBuilder->getParams());
+
+        return $stm->fetchColumn();
+    }
 }

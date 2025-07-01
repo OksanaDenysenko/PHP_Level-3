@@ -1,4 +1,3 @@
--- Створення тригера для автоматичного додавання запису в clicks після додавання книги
 DELIMITER //
 CREATE TRIGGER after_book_insert
     AFTER INSERT ON books

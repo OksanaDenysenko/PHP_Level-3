@@ -8,5 +8,6 @@ enum StatusCode: int
     case Bad_Request = 400;
     case Unauthorized = 401;
     case Page_Not_Found = 404;
+    case Conflict = 409;
     case Server_Error = 500;
 }

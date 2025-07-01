@@ -9,7 +9,9 @@ use App\Repository\ClickRepository;
 use Core\Application\Controller;
 use Core\Application\Handler;
 use Core\Application\Paginator;
+use Core\Application\StatusCode;
 use Core\Data\Database;
+use JetBrains\PhpStorm\NoReturn;
 
 class HomeController extends Controller
 {
@@ -29,7 +31,7 @@ class HomeController extends Controller
      * @param int $id - book id
      * @return void
      */
-    public function deleteBook(int $id): void
+    #[NoReturn] public function deleteBook(int $id): void
     {
         $this->ensureAjax();
         $this->jsonResponse((new BookRepository())->softDeleteBook($id));
@@ -46,6 +48,11 @@ class HomeController extends Controller
         $year = !empty($_POST['year']) ? (int)$_POST['year'] : null;
         $pages = !empty($_POST['pages']) ? (int)$_POST['pages'] : null;
         $authors = array_filter([$_POST['author1'], $_POST['author2'], $_POST['author3']]);
+
+        if ((new BookRepository())->doesBookExistByTitle($title)) {
+            $this->jsonResponse(false, StatusCode::Conflict->value, StatusCode::Conflict->name);
+        }
+
         Database::getConnection()->beginTransaction();
 
         try {
@@ -53,19 +60,19 @@ class HomeController extends Controller
 
             foreach ($authors as $author) {
                 $existingAuthor = (new AuthorRepository())->findAuthorIdByName($author);
-                $authorId = ($existingAuthor) ? $existingAuthor : (new AuthorRepository())->addAuthor($author);
+                $authorId = ($existingAuthor) ?: (new AuthorRepository())->addAuthor($author);
                 (new BookAuthorRepository())->addBookAuthorLink($bookId, $authorId);
             }
 
             (new ClickRepository())->addBook($bookId);
             Database::getConnection()->commit();
 
-            $this->jsonResponse(true);
-        } catch (\Exception $e){
+            $this->jsonResponse(true, StatusCode::OK->value, StatusCode::OK->name);
+        } catch (\Exception $e) {
             Database::getConnection()->rollBack();
             Handler::logError($e->getMessage(), $e->getFile(), $e->getLine());
 
-            $this->jsonResponse(false);
+            $this->jsonResponse(false, StatusCode::Server_Error->value, StatusCode::Server_Error->name);
         }
     }
 }

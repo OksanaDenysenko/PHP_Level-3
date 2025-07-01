@@ -39,29 +39,28 @@ class Controller
     protected function ensureAjax(): void
     {
         if ($_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest') {
-            header("HTTP/1.1 " . StatusCode::Bad_Request->value . " " . StatusCode::Bad_Request->name);
-            header('Content-Type: application/json');
-            echo json_encode(['error' => StatusCode::Bad_Request->name]);
-
-            exit;
+            $this->jsonResponse(false,StatusCode::Bad_Request->value,StatusCode::Bad_Request->name);
         }
     }
 
     /**
      * The function sends an HTTP response in JSON format
-     * @param bool $success - the result of the request
+     * @param bool $result - the result of the request
+     * @param int $statusCode
+     * @param string $message
      * @return void
      */
-    #[NoReturn] protected function jsonResponse(bool $success): void
-    {
-        header('Content-Type: application/json');
-        header("HTTP/1.1 " . StatusCode::OK->value . " " . StatusCode::OK->name);
 
-        if ($success) {
-            echo json_encode(['status' => 'success']);
-        } else {
-            echo json_encode(['status' => 'false']);
+    #[NoReturn] protected function jsonResponse(bool $result, int $statusCode=0, string $message=''): void
+    {
+        if ($statusCode === 0) {
+            $statusCode = $result ? StatusCode::OK->value : StatusCode::Server_Error->value;
         }
+
+        header('Content-Type: application/json');
+        header("HTTP/1.1 " . $statusCode . " " . StatusCode::from($statusCode)->name);
+        echo json_encode(['status'  => $result ? 'success' : 'error',
+            'message' => $message ?: StatusCode::from($statusCode)->name]);
 
         exit;
     }
