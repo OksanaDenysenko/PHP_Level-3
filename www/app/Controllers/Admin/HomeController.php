@@ -8,6 +8,7 @@ use App\Repository\BookRepository;
 use App\Repository\ClickRepository;
 use Core\Application\Controller;
 use Core\Application\Handler;
+use Core\Application\ImageUploader;
 use Core\Application\Paginator;
 use Core\Application\StatusCode;
 use Core\Data\Database;
@@ -48,6 +49,7 @@ class HomeController extends Controller
         $year = !empty($_POST['year']) ? (int)$_POST['year'] : null;
         $pages = !empty($_POST['pages']) ? (int)$_POST['pages'] : null;
         $authors = array_filter([$_POST['author1'], $_POST['author2'], $_POST['author3']]);
+        $bookImage = $_FILES['bookImage'] ?? null;
 
         if ((new BookRepository())->doesBookExistByTitle($title)) {
             $this->jsonResponse(false, StatusCode::Conflict->value, StatusCode::Conflict->name);
@@ -56,7 +58,13 @@ class HomeController extends Controller
         Database::getConnection()->beginTransaction();
 
         try {
-            $bookId = (new BookRepository())->addBook($title, $content, $year, $pages);
+            $imagePath = null;
+
+            if ($bookImage && $bookImage['name']) {
+                $imagePath = (new ImageUploader())->upload($bookImage);
+            }
+
+            $bookId = (new BookRepository())->addBook($title, $content, $year, $pages, $imagePath);
 
             foreach ($authors as $author) {
                 $existingAuthor = (new AuthorRepository())->findAuthorIdByName($author);
@@ -71,7 +79,11 @@ class HomeController extends Controller
         } catch (\Exception $e) {
             Database::getConnection()->rollBack();
             Handler::logError($e->getMessage(), $e->getFile(), $e->getLine());
-
+//            if (str_contains($errorMessage, 'Недопустимий тип файлу') || str_contains($errorMessage, 'Розмір файлу перевищує')) {
+//                $this->jsonResponse(false, StatusCode::BAD_REQUEST->value, $errorMessage);
+//            } else {
+//                $this->jsonResponse(false, StatusCode::INTERNAL_SERVER_ERROR->value, 'Сталася внутрішня помилка при додаванні книги. Будь ласка, спробуйте пізніше.');
+//            }
             $this->jsonResponse(false, StatusCode::Server_Error->value, StatusCode::Server_Error->name);
         }
     }
