@@ -8,5 +8,5 @@ Router::get('/book/(?P<number>[0-9]+)','BookController','index');
 Router::get('/test','Admin\Test','index');
 Router::post('/book/clicks/(?P<number>[0-9]+)','BookController','increaseClicks');
 Router::post('/book/views/(?P<number>[0-9]+)','BookController','increaseViews');
-Router::delete('/admin/book/delete/(?P<number>[0-9]+)','Admin\HomeController','deleteBook');
-Router::post('/admin/add/book','Admin\HomeController','createBook');
+Router::delete('/admin/book/delete/(?P<number>[0-9]+)','Admin\BookController','deleteBook');
+Router::post('/admin/add/book','Admin\BookController','createBook');

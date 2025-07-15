@@ -106,13 +106,13 @@ class BookRepository extends Repository
 
     /**
      * The function adds the data of new book to the database
-     * @param $title
-     * @param $content
-     * @param $year
-     * @param $pages
+     * @param string $title
+     * @param string $content
+     * @param int $year
+     * @param int $pages
      * @return false|string book id
      */
-    public function addBook($title, $content, $year, $pages): false|string
+    public function addBook(string $title, string $content, int $year, int $pages): false|string
     {
         $QueryBuilder = (new InsertQueryBuilder())
             ->table(self::TABLE_NAME)
