@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Repository\BookRepository;
 use App\Repository\ClickRepository;
 use Core\Application\Controller;
+use JetBrains\PhpStorm\NoReturn;
 
 class BookController extends Controller
 {
@@ -23,7 +24,7 @@ class BookController extends Controller
      * @param int $id - book id
      * @return void
      */
-    public function increaseClicks(int $id): void
+    #[NoReturn] public function increaseClicks(int $id): void
     {
         $this->ensureAjax();
         $this->jsonResponse((new ClickRepository())->increaseClicks($id));
@@ -34,7 +35,7 @@ class BookController extends Controller
      * @param int $id - book id
      * @return void
      */
-    public function increaseViews(int $id): void
+    #[NoReturn] public function increaseViews(int $id): void
     {
         $this->ensureAjax();
         $this->jsonResponse((new ClickRepository())->increaseViews($id));

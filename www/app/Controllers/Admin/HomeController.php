@@ -64,7 +64,7 @@ class HomeController extends Controller
                 $imagePath = (new ImageUploader())->upload($bookImage);
             }
 
-            $bookId = (new BookRepository())->addBook($title, $content, $year, $pages, $imagePath);
+            $bookId = (new BookRepository())->addBook($title, $content, $year, $pages, basename($imagePath));
 
             foreach ($authors as $author) {
                 $existingAuthor = (new AuthorRepository())->findAuthorIdByName($author);
@@ -78,13 +78,15 @@ class HomeController extends Controller
             $this->jsonResponse(true, StatusCode::OK->value, StatusCode::OK->name);
         } catch (\Exception $e) {
             Database::getConnection()->rollBack();
+
+            if ($imagePath && file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+
             Handler::logError($e->getMessage(), $e->getFile(), $e->getLine());
-//            if (str_contains($errorMessage, 'Недопустимий тип файлу') || str_contains($errorMessage, 'Розмір файлу перевищує')) {
-//                $this->jsonResponse(false, StatusCode::BAD_REQUEST->value, $errorMessage);
-//            } else {
-//                $this->jsonResponse(false, StatusCode::INTERNAL_SERVER_ERROR->value, 'Сталася внутрішня помилка при додаванні книги. Будь ласка, спробуйте пізніше.');
-//            }
-            $this->jsonResponse(false, StatusCode::Server_Error->value, StatusCode::Server_Error->name);
+            //throw new Exception($e->getMessage(),$e->getCode());
+
+            $this->jsonResponse(false, $e->getCode(), $e->getMessage());
         }
     }
 }
