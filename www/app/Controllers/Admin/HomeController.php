@@ -25,5 +25,4 @@ class HomeController extends Controller
 
         require DEFAULT_TEMPLATE_ADMIN;
     }
-
 }
