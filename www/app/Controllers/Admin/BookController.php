@@ -9,6 +9,7 @@ use App\Repository\ClickRepository;
 use Core\Application\Controller;
 use Core\Application\Handler;
 use Core\Application\StatusCode;
+use Core\Application\Validator\BookValidator;
 use Core\Data\Database;
 use JetBrains\PhpStorm\NoReturn;
 
@@ -23,7 +24,10 @@ class BookController extends Controller
     #[NoReturn] public function deleteBook(int $id): void
     {
         $this->ensureAjax();
-        $this->jsonResponse((new BookRepository())->softDeleteBook($id));
+
+        ((new BookRepository())->softDeleteBook($id))?
+            $this->jsonResponse(StatusCode::OK->value):
+            $this->jsonResponse(StatusCode::Server_Error->value);
     }
 
     /**
@@ -33,14 +37,22 @@ class BookController extends Controller
     public function createBook(): void
     {
         $this->ensureAjax();
+        $validator = new BookValidator($_POST);
+
+        if (!$validator->validate()) {
+            $errors=$validator->getError();
+
+            $this->jsonResponse(StatusCode::Bad_Request->value, StatusCode::Bad_Request->name, $errors);
+        }
+
         $title = $_POST['title'];
         $content = $_POST['description'] ?: '';
-        $year = (!empty($_POST['year'])&& is_numeric($_POST['year'])) ? (int)$_POST['year'] : null;
-        $pages = (!empty($_POST['pages'])&& is_numeric($_POST['pages'])) ? (int)$_POST['pages'] : null;
+        $year = (int)$_POST['year'] ?: null;
+        $pages = (int)$_POST['pages'] ?: null;
         $authors = array_filter([$_POST['author1'], $_POST['author2'], $_POST['author3']]);
 
         if ((new BookRepository())->doesBookExistByTitle($title)) {
-            $this->jsonResponse(false, StatusCode::Conflict->value, StatusCode::Conflict->name);
+            $this->jsonResponse(StatusCode::Conflict->value, StatusCode::Conflict->name);
         }
 
         Database::getConnection()->beginTransaction();
@@ -57,13 +69,12 @@ class BookController extends Controller
             (new ClickRepository())->addBook($bookId);
             Database::getConnection()->commit();
 
-            $this->jsonResponse(true, StatusCode::OK->value, StatusCode::OK->name);
+            $this->jsonResponse(StatusCode::OK->value, StatusCode::OK->name);
         } catch (\Exception $e) {
             Database::getConnection()->rollBack();
             Handler::logError($e->getMessage(), $e->getFile(), $e->getLine());
-           // throw new \Exception(StatusCode::Page_Not_Found->name,StatusCode::Page_Not_Found->value);
 
-            $this->jsonResponse(false, StatusCode::Server_Error->value, StatusCode::Server_Error->name);
+            $this->jsonResponse(StatusCode::Server_Error->value, StatusCode::Server_Error->name);
         }
     }
 }

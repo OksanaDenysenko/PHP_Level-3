@@ -39,28 +39,25 @@ class Controller
     protected function ensureAjax(): void
     {
         if ($_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest') {
-            $this->jsonResponse(false,StatusCode::Bad_Request->value,StatusCode::Bad_Request->name);
+            $this->jsonResponse(false, StatusCode::Bad_Request->value, StatusCode::Bad_Request->name);
         }
     }
 
     /**
      * The function sends an HTTP response in JSON format
-     * @param bool $result - the result of the request
      * @param int $statusCode
      * @param string $message
+     * @param array $errors
      * @return void
      */
 
-    #[NoReturn] protected function jsonResponse(bool $result, int $statusCode=0, string $message=''): void
+    #[NoReturn] protected function jsonResponse(int $statusCode, string $message = '', array $errors = []): void
     {
-        if ($statusCode === 0) {
-            $statusCode = $result ? StatusCode::OK->value : StatusCode::Server_Error->value;
-        }
-
         header('Content-Type: application/json');
         header("HTTP/1.1 " . $statusCode . " " . StatusCode::from($statusCode)->name);
-        echo json_encode(['status'  => $result ? 'success' : 'error',
-            'message' => $message ?: StatusCode::from($statusCode)->name]);
+        echo json_encode(['status' => $statusCode==StatusCode::OK->value ? 'success' : 'error',
+            'message' => $message ?: StatusCode::from($statusCode)->name,
+            'errors' => $errors ?: null]);
 
         exit;
     }

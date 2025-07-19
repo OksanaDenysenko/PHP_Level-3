@@ -7,7 +7,7 @@ use Core\Application\Validator\Validator;
 class ImageValidator implements Validator
 {
 
-    public function validate(array $data)
+    public function validate()
     {
         // TODO: Implement validate() method.
     }

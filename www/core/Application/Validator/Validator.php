@@ -4,5 +4,5 @@ namespace Core\Application\Validator;
 
 interface Validator
 {
-    public function validate(array $data);
+    public function validate();
 }
