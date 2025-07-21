@@ -59,17 +59,19 @@ class BookValidator implements Validator
      */
     private function validateContent(): void {
         $content = trim($this->data['description'] ?? '');
-        $minLength = 10;
-        $maxLength = 2000;
+        $lengthFrom = 10;
+        $lengthTo = 2000;
 
         if (!empty($content)) {
 
-            if (mb_strlen($content) < $minLength) {
-                $this->errors['description']= "Опис повинен містити щонайменше $minLength символів.";
+            if (mb_strlen($content) < $lengthFrom) {
+                $this->errors['description']= "Опис повинен містити щонайменше $lengthFrom символів.";
+
+                return;
             }
 
-            if (mb_strlen($content) > $maxLength) {
-                $this->errors['description']= "Опис не повинен перевищувати $maxLength символів.";
+            if (mb_strlen($content) > $lengthTo) {
+                $this->errors['description']= "Опис не повинен перевищувати $lengthTo символів.";
             }
         }
     }
@@ -82,7 +84,7 @@ class BookValidator implements Validator
         $year = $this->data['year'] ?? null;
         $minYear = 1400;
 
-        if ($year !== null && (!is_numeric($year) || $year < $minYear || $year > date('Y'))) {
+        if ($year !== null && (filter_var($year, FILTER_VALIDATE_INT)===false || $year < $minYear || $year > date('Y'))) {
             $this->errors['year']= "Рік повинен бути дійсним числом (між $minYear і поточним роком).";
         }
     }
@@ -94,7 +96,7 @@ class BookValidator implements Validator
     private function validatePages(): void {
         $pages = $this->data['pages'] ?? null;
 
-        if ($pages !== null && (!is_numeric($pages) || $pages <= 0)) {
+        if ($pages !== null && (filter_var($pages, FILTER_VALIDATE_INT)===false || $pages <= 0)) {
             $this->errors['pages']= 'Кількість сторінок повинна бути додатнім числом.';
         }
     }
