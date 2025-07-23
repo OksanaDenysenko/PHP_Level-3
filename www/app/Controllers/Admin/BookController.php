@@ -25,7 +25,7 @@ class BookController extends Controller
     {
         $this->ensureAjax();
 
-        ((new BookRepository())->softDeleteBook($id))?
+        (new BookRepository()->softDeleteBook($id))?
             $this->jsonResponse(StatusCode::OK->value):
             $this->jsonResponse(StatusCode::Server_Error->value);
     }
@@ -40,9 +40,8 @@ class BookController extends Controller
         $validator = new BookValidator($_POST);
 
         if (!$validator->validate()) {
-            $errors=$validator->getError();
 
-            $this->jsonResponse(StatusCode::Bad_Request->value, StatusCode::Bad_Request->name, $errors);
+            $this->jsonResponse(StatusCode::Bad_Request->value, StatusCode::Bad_Request->name, $validator->errors);
         }
 
         $title = $_POST['title'];
@@ -51,22 +50,22 @@ class BookController extends Controller
         $pages = (int)$_POST['pages'] ?: null;
         $authors = array_filter([$_POST['author1'], $_POST['author2'], $_POST['author3']]);
 
-        if ((new BookRepository())->doesBookExistByTitle($title)) {
+        if (new BookRepository()->doesBookExistByTitle($title)) {
             $this->jsonResponse(StatusCode::Conflict->value, StatusCode::Conflict->name);
         }
 
         Database::getConnection()->beginTransaction();
 
         try {
-            $bookId = (new BookRepository())->addBook($title, $content, $year, $pages);
+            $bookId = new BookRepository()->addBook($title, $content, $year, $pages);
 
             foreach ($authors as $author) {
-                $existingAuthor = (new AuthorRepository())->findAuthorIdByName($author);
-                $authorId = ($existingAuthor) ?: (new AuthorRepository())->addAuthor($author);
-                (new BookAuthorRepository())->addBookAuthorLink($bookId, $authorId);
+                $existingAuthor = new AuthorRepository()->findAuthorIdByName($author);
+                $authorId = ($existingAuthor) ?: new AuthorRepository()->addAuthor($author);
+                new BookAuthorRepository()->addBookAuthorLink($bookId, $authorId);
             }
 
-            (new ClickRepository())->addBook($bookId);
+            new ClickRepository()->addBook($bookId);
             Database::getConnection()->commit();
 
             $this->jsonResponse(StatusCode::OK->value, StatusCode::OK->name);

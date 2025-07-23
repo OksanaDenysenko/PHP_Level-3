@@ -5,8 +5,8 @@ namespace Core\Application\Validator;
 class BookValidator implements Validator
 {
     private array $data=[];
-   // public private(set) array $errors=[];
-    private array $errors=[];
+
+   public private(set) array $errors=[];
 
     public function __construct($data)
     {
@@ -26,15 +26,6 @@ class BookValidator implements Validator
         $this->validateAuthors();
 
         return empty($this->errors);
-    }
-
-    /**
-     * The function provides access to the error array
-     * @return array
-     */
-    public function getError(): array
-    {
-        return $this->errors;
     }
 
     /**
@@ -59,21 +50,21 @@ class BookValidator implements Validator
      */
     private function validateContent(): void {
         $content = trim($this->data['description'] ?? '');
-        $lengthFrom = 10;
-        $lengthTo = 2000;
 
-        if (!empty($content)) {
+        if (empty($content)) return;
 
-            if (mb_strlen($content) < $lengthFrom) {
-                $this->errors['description']= "Опис повинен містити щонайменше $lengthFrom символів.";
+        $minLength = 10;
+        $maxLength = 2000;
+
+            if (mb_strlen($content) < $minLength) {
+                $this->errors['description']= "Опис повинен містити щонайменше $minLength символів.";
 
                 return;
             }
 
-            if (mb_strlen($content) > $lengthTo) {
-                $this->errors['description']= "Опис не повинен перевищувати $lengthTo символів.";
+            if (mb_strlen($content) > $maxLength) {
+                $this->errors['description']= "Опис не повинен перевищувати $maxLength символів.";
             }
-        }
     }
 
     /**
