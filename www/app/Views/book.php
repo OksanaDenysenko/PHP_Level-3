@@ -16,7 +16,7 @@
                     </div>
                 </div>
             </script>
-            <div id="id" book-id="<?= $data['id'] ?>">
+            <div id="id" data-book-id="<?= $data['id'] ?>">
                 <div id="bookImg" class="col-xs-12 col-sm-3 col-md-3 item" style="
     margin:;
 "><img src="/assets/images/<?= $data['id'] ?>.jpg" alt="Responsive image" class="img-responsive">
@@ -38,7 +38,7 @@
                         </div>
                     </div>
                     <div class="btnBlock col-xs-12 col-sm-12 col-md-12">
-                        <button type="button" class="btnBookID btn-lg btn btn-success">Хочу читать!</button>
+                        <button type="button" class="btnBookID btn-lg btn btn-success" data-book-id="<?= $data['id'] ?>">Хочу читать!</button>
                     </div>
                     <div class="bookDescription col-xs-12 col-sm-12 col-md-12 hidden-xs hidden-sm">
                         <h4>О книге</h4>

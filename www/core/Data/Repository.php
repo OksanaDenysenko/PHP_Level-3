@@ -3,6 +3,11 @@
 namespace Core\Data;
 
 
+use Core\Data\QueryBuilder\DeleteQueryBuilder;
+use Core\Data\QueryBuilder\InsertQueryBuilder;
+use Core\Data\QueryBuilder\SelectQueryBuilder;
+use Core\Data\QueryBuilder\UpdateQueryBuilder;
+
 abstract class Repository
 {
     protected const TABLE_NAME = '';
@@ -14,8 +19,12 @@ abstract class Repository
      */
     public function find(int $id): mixed
     {
-        $stm = Database::getConnection()->prepare("SELECT * FROM " . static::TABLE_NAME . " WHERE id = :id");
-        $stm->execute(['id' => $id]);
+        $sql = (new SelectQueryBuilder())
+            ->table(static::TABLE_NAME)
+            ->where(['id = :id'])
+            ->setParams(['id' => $id]);
+        $stm = Database::getConnection()->prepare($sql->getQuery());
+        $stm->execute($sql->getParams());
 
         return $stm->fetch();
     }
@@ -27,7 +36,11 @@ abstract class Repository
      */
     public function getAll(string $nameColumns = '*'): bool|array
     {
-        return Database::getConnection()->query("SELECT $nameColumns FROM " . static::TABLE_NAME)->fetchAll();
+        $sql = (new SelectQueryBuilder())
+            ->select([$nameColumns])
+            ->table(static::TABLE_NAME);
+
+        return Database::getConnection()->query($sql->getQuery())->fetchAll();
     }
 
     /**
@@ -38,9 +51,12 @@ abstract class Repository
     public function insert(array $data): void
     {
         $keys = array_keys($data);
-
-        Database::getConnection()->prepare("INSERT INTO " . static::TABLE_NAME . " (" . implode(',', $keys) . ") 
-                         VALUES (:" . implode(",:", $keys) . ")")->execute($data);
+        $sql = (new InsertQueryBuilder())
+            ->table(static::TABLE_NAME)
+            ->insert($keys)
+            ->values($keys)
+            ->setParams($data);
+        Database::getConnection()->prepare($sql->getQuery())->execute($sql->getParams());
     }
 
     /**
@@ -52,16 +68,13 @@ abstract class Repository
     public function update(int $id, array $data): void
     {
         $keys = array_keys($data);
-        $query = 'UPDATE ' . static::TABLE_NAME . ' SET ';
-
-        foreach ($keys as $key) {
-            $query = $query . "$key=:$key, ";
-        }
-
-        $query = rtrim($query, ", ") . " WHERE id=:id";
-        $data['id'] = $id;
-
-        Database::getConnection()->prepare($query, $data)->execute($data);
+        $sql = (new UpdateQueryBuilder())
+            ->table(static::TABLE_NAME)
+            ->update($keys)
+            ->where(['id=:id'])
+            ->setParams($data)
+            ->addParams(['id' => $id]);
+        Database::getConnection()->prepare($sql->getQuery())->execute($sql->getParams());
     }
 
     /**
@@ -71,15 +84,10 @@ abstract class Repository
      */
     public function delete(int $id): void
     {
-        Database::getConnection()->prepare('DELETE FROM ' . static::TABLE_NAME . ' WHERE id = :id')->execute(['id'=>$id]);
-    }
-
-    /**
-     * The function receives the number of entries in the table
-     * @return mixed
-     */
-    public function count(): int
-    {
-        return Database::getConnection()->query("SELECT COUNT(*) FROM " . static::TABLE_NAME)->fetchColumn();
+        $sql=(new DeleteQueryBuilder())
+            ->table(static::TABLE_NAME)
+            ->where(['id=:id'])
+            ->setParams(['id' => $id]);
+        Database::getConnection()->prepare($sql->getQuery())->execute($sql->getParams());
     }
 }

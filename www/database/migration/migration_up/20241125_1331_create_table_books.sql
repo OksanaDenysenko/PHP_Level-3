@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS books (
                        title VARCHAR(255) NOT NULL UNIQUE,
                        content TEXT,
                        year YEAR,
-                       number_of_pages INT
+                       number_of_pages INT UNSIGNED
 );

@@ -3,13 +3,13 @@
 namespace Core\Application;
 
 use Core\Data\Database;
-use Core\Data\QueryBuilder;
+use Core\Data\QueryBuilder\SelectQueryBuilder;
 use Exception;
 use PDO;
 
 class Paginator
 {
-    private QueryBuilder $queryBuilder;
+    private SelectQueryBuilder $queryBuilder;
     private PDO $pdo;
     private int $limit;
     private int $currentPage;
@@ -19,7 +19,7 @@ class Paginator
     /**
      * @throws Exception
      */
-    public function __construct(QueryBuilder $queryBuilder, int $limit = 20)
+    public function __construct(SelectQueryBuilder $queryBuilder, int $limit = 20)
     {
         $this->pdo = Database::getConnection();
         $this->queryBuilder = $queryBuilder;
@@ -90,12 +90,12 @@ class Paginator
 
     /**
      * The function calculates the total number of pages for pagination
-     * @param QueryBuilder $queryBuilder
+     * @param SelectQueryBuilder $queryBuilder
      * @return int
      */
-    protected function getCountPages(QueryBuilder $queryBuilder): int
+    protected function getCountPages(SelectQueryBuilder $queryBuilder): int
     {
-        $tableWithAlias=explode(' ',$queryBuilder->getFrom());
+        $tableWithAlias=explode(' ',$queryBuilder->getTable());
         $queryBuilder->select(['COUNT(DISTINCT '.end($tableWithAlias).'.id)'])-> group();
         $totalRecords = $this->pdo->query($queryBuilder->getQuery())->fetchColumn();
 
