@@ -6,6 +6,7 @@ use App\Repository\BookRepository;
 use App\Repository\ClickRepository;
 use Core\Application\Controller;
 use JetBrains\PhpStorm\NoReturn;
+use Core\Application\StatusCode;
 
 class BookController extends Controller
 {
@@ -14,9 +15,9 @@ class BookController extends Controller
      */
     function index(int $id): void
     {
-       $this->view('book', (new BookRepository())->getBookWithAuthors($id));
+        $this->view('book', (new BookRepository())->getBookWithAuthors($id));
 
-       require DEFAULT_TEMPLATE;
+        require DEFAULT_TEMPLATE;
     }
 
     /**
@@ -24,10 +25,12 @@ class BookController extends Controller
      * @param int $id - book id
      * @return void
      */
-    #[NoReturn] public function increaseClicks(int $id): void
+    public function increaseClicks(int $id): void
     {
         $this->ensureAjax();
-        $this->jsonResponse((new ClickRepository())->increaseClicks($id));
+        ((new ClickRepository())->increaseClicks($id)) ?
+            $this->jsonResponse(StatusCode::OK->value) :
+            $this->jsonResponse(StatusCode::Server_Error->value);
     }
 
     /**
@@ -35,9 +38,11 @@ class BookController extends Controller
      * @param int $id - book id
      * @return void
      */
-    #[NoReturn] public function increaseViews(int $id): void
+    public function increaseViews(int $id): void
     {
         $this->ensureAjax();
-        $this->jsonResponse((new ClickRepository())->increaseViews($id));
+        ((new ClickRepository())->increaseViews($id)) ?
+            $this->jsonResponse(StatusCode::OK->value) :
+            $this->jsonResponse(StatusCode::Server_Error->value);
     }
 }
