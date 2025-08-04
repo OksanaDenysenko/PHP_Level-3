@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Repository\BookRepository;
 use App\Repository\ClickRepository;
 use Core\Application\Controller;
+use JetBrains\PhpStorm\NoReturn;
 use Core\Application\StatusCode;
 
 class BookController extends Controller

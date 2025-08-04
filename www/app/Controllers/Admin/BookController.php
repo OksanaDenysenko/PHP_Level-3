@@ -8,8 +8,10 @@ use App\Repository\BookRepository;
 use App\Repository\ClickRepository;
 use Core\Application\Controller;
 use Core\Application\Handler;
+use Core\Application\ImageUploader;
 use Core\Application\StatusCode;
 use Core\Application\Validator\BookValidator;
+use Core\Application\Validator\ImageValidator;
 use Core\Data\Database;
 use JetBrains\PhpStorm\NoReturn;
 
@@ -37,11 +39,11 @@ class BookController extends Controller
     public function createBook(): void
     {
         $this->ensureAjax();
-        $validator = new BookValidator($_POST);
+        $bookValidator = new BookValidator($_POST);
 
-        if (!$validator->validate()) {
+        if (!$bookValidator->validate()) {
 
-            $this->jsonResponse(StatusCode::Bad_Request->value, StatusCode::Bad_Request->name, $validator->errors);
+            $this->jsonResponse(StatusCode::Bad_Request->value, StatusCode::Bad_Request->name, $bookValidator->errors);
         }
 
         $title = $_POST['title'];
@@ -54,10 +56,24 @@ class BookController extends Controller
             $this->jsonResponse(StatusCode::Conflict->value, StatusCode::Conflict->name);
         }
 
+        $bookImage = $_FILES['bookImage'] ?? null;
+        $image = null;
+
+        if ($bookImage && $bookImage['name']) {
+            $imageValidator = new ImageValidator($bookImage);
+
+            if (!$imageValidator->validate()) {
+
+                $this->jsonResponse(StatusCode::Bad_Request->value, StatusCode::Bad_Request->name, $imageValidator->errors);
+            }
+
+            $image = new ImageUploader()->upload($bookImage);
+        }
+
         Database::getConnection()->beginTransaction();
 
         try {
-            $bookId = new BookRepository()->addBook($title, $content, $year, $pages);
+            $bookId = new BookRepository()->addBook($title, $content, $year, $pages, $image);
 
             foreach ($authors as $author) {
                 $existingAuthor = new AuthorRepository()->findAuthorIdByName($author);
@@ -72,6 +88,10 @@ class BookController extends Controller
         } catch (\Exception $e) {
             Database::getConnection()->rollBack();
             Handler::logError($e->getMessage(), $e->getFile(), $e->getLine());
+
+            if ($image && file_exists($image)) {
+                unlink(IMAGES_DIR.'/'.$image);
+            }
 
             $this->jsonResponse(StatusCode::Server_Error->value, StatusCode::Server_Error->name);
         }

@@ -5,7 +5,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form id="addBookForm" action="http://localhost/admin/add/book" method="POST">
+            <form id="addBookForm" action="http://localhost/admin/add/book" method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="title"></label><input type="text" class="form-control" id="title" name="title"
                                                       required placeholder="Назва книги">
@@ -34,6 +34,10 @@
                     <label for="description"></label><textarea class="form-control" id="description"
                                                                name="description" rows="3"
                                                                placeholder="Опис"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="bookImage" class="form-label">Обкладинка книги</label>
+                    <input type="file" class="form-control" id="bookImage" name="bookImage" accept="image/*">
                 </div>
                 <button type="submit" class="btn btn-primary">Зберегти книгу</button>
             </form>
