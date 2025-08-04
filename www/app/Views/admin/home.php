@@ -16,7 +16,7 @@
             <tr>
                 <td>
                     <?php if (isset($book['id'])) : ?>
-                        <img src="/assets/images/<?= $book['id'] ?>.jpg" alt="Зображення книги"
+                        <img src="/assets/images/<?= $book['image'] ?>" alt="Зображення книги"
                              style="max-width: 50px; max-height: 50px;">
                     <?php endif; ?>
                     <?= $book['title'] ?>

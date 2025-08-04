@@ -23,7 +23,7 @@ class BookRepository extends Repository
     {
         $queryBuilder = $this->getQueryBuilder();
 
-        return $queryBuilder->select(['b.id', 'b.title',
+        return $queryBuilder->select(['b.id', 'b.title', 'b.image',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors']);
     }
 
@@ -37,7 +37,7 @@ class BookRepository extends Repository
     {
         $queryBuilder = $this->getQueryBuilder();
 
-        return $queryBuilder->select(['b.id', 'b.title', 'b.year', 'c.view_count', 'c.click_count',
+        return $queryBuilder->select(['b.id', 'b.title', 'b.year', 'b.image', 'c.view_count', 'c.click_count',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors'])
             ->join('clicks c', 'b.id = c.book_id', 'LEFT');
     }
@@ -51,7 +51,7 @@ class BookRepository extends Repository
     public function getBookWithAuthors(int $id): mixed
     {
         $queryBuilder = $this->getQueryBuilderWithDeleted();
-        $queryBuilder->select(['b.id', 'b.title', 'b.content', 'b.year', 'b.number_of_pages',
+        $queryBuilder->select(['b.id', 'b.title', 'b.content', 'b.year', 'b.number_of_pages', 'b.image',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors'])
             ->where(['b.id = :id'])
             ->setParams(['id' => $id]);
