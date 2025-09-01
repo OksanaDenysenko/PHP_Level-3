@@ -23,7 +23,7 @@ class BookRepository extends Repository
     {
         $queryBuilder = $this->getQueryBuilder();
 
-        return $queryBuilder->select(['b.id', 'b.title',
+        return $queryBuilder->select(['b.id', 'b.title', 'b.image',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors']);
     }
 
@@ -37,7 +37,7 @@ class BookRepository extends Repository
     {
         $queryBuilder = $this->getQueryBuilder();
 
-        return $queryBuilder->select(['b.id', 'b.title', 'b.year', 'c.view_count', 'c.click_count',
+        return $queryBuilder->select(['b.id', 'b.title', 'b.year', 'b.image', 'c.view_count', 'c.click_count',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors'])
             ->join('clicks c', 'b.id = c.book_id', 'LEFT');
     }
@@ -51,7 +51,7 @@ class BookRepository extends Repository
     public function getBookWithAuthors(int $id): mixed
     {
         $queryBuilder = $this->getQueryBuilderWithDeleted();
-        $queryBuilder->select(['b.id', 'b.title', 'b.content', 'b.year', 'b.number_of_pages',
+        $queryBuilder->select(['b.id', 'b.title', 'b.content', 'b.year', 'b.number_of_pages', 'b.image',
             'GROUP_CONCAT(a.full_name SEPARATOR \', \') AS authors'])
             ->where(['b.id = :id'])
             ->setParams(['id' => $id]);
@@ -107,20 +107,22 @@ class BookRepository extends Repository
     /**
      * The function adds the data of new book to the database
      * @param string $title
-     * @param string $content
-     * @param int $year
-     * @param int $pages
+     * @param string|null $content
+     * @param int|null $year
+     * @param int|null $pages
+     * @param string|null $imagePath
      * @return false|string book id
      */
-    public function addBook(string $title, string $content, int $year, int $pages): false|string
+    public function addBook(string $title, ?string $content, ?int $year, ?int $pages, ?string $imagePath): false|string
     {
         $QueryBuilder = (new InsertQueryBuilder())
             ->table(self::TABLE_NAME)
-            ->insert(['title', 'content', 'year', 'number_of_pages'])
+            ->insert(['title', 'content', 'year', 'number_of_pages', 'image'])
             ->setParams(['title' => $title,
                 'content' => $content,
                 'year' => $year,
-                'number_of_pages' => $pages]);
+                'number_of_pages' => $pages,
+                'image'=>$imagePath]);
         $stm = Database::getConnection()->prepare($QueryBuilder->getQuery());
         $stm->execute($QueryBuilder->getParams());
 

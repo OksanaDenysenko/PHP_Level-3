@@ -6,16 +6,20 @@ $(document).ready(function () {
 
         const form = $(this); // Елемент форми, що був відправлений
         const url = form.attr('action'); // URL, куди відправляти запит
-        const formData = form.serialize(); // Дані форми у вигляді рядка "key=value&key2=value2"
+        const formData = new FormData(form[0]); // Дані форми у вигляді рядка "key=value&key2=value2"
 
         // Можна відключити кнопку, поки запит виконується
         const submitButton = form.find('button[type="submit"]');
         submitButton.prop('disabled', true).text('Зберігаємо...');
 
+        $('#alertContainer').empty(); // Очищаємо сповіщення перед новим запитом
+
         $.ajax({
             type: "POST",
             url: '/admin/add/book',
             data: formData, // Дані, що відправляються на сервер
+            processData: false, // Вказує jQuery не обробляти дані
+            contentType: false, // Вказує jQuery не встановлювати Content-Type заголовок
             dataType: "json",
             success: function (response) {
                 if (response.status === 'success') {
